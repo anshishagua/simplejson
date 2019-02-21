@@ -6,14 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class JSONArray {
-    private List<Object> values;
+public class JSONArray implements JSONValue {
+    private List<JSONValue> values;
 
     public JSONArray() {
         values = new ArrayList<>();
     }
 
-    public JSONArray(Object[] objects) {
+    public JSONArray(JSONValue[] objects) {
         Objects.requireNonNull(objects);
 
         values = new ArrayList<>(objects.length);
@@ -21,7 +21,7 @@ public class JSONArray {
         values.addAll(Arrays.asList(objects));
     }
 
-    public Object get(int index) {
+    public JSONValue get(int index) {
         return values.get(index);
     }
 
@@ -29,8 +29,19 @@ public class JSONArray {
         return format(0);
     }
 
+    @Override
     public String format(int indent) {
         StringBuilder builder = new StringBuilder("[");
+
+        Iterator<JSONValue> iterator = values.iterator();
+
+        while (iterator.hasNext()) {
+            builder.append(iterator.next().format(indent));
+
+            if (iterator.hasNext()) {
+                builder.append(", ");
+            }
+        }
 
         builder.append("]");
 
@@ -41,7 +52,7 @@ public class JSONArray {
     public String toString() {
         StringBuilder builder = new StringBuilder("[");
 
-        Iterator<Object> iterator = values.iterator();
+        Iterator<JSONValue> iterator = values.iterator();
 
         while (iterator.hasNext()) {
             builder.append(iterator.next());

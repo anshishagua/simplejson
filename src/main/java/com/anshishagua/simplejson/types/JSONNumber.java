@@ -2,7 +2,7 @@ package com.anshishagua.simplejson.types;
 
 import java.math.BigInteger;
 
-public class JSONNumber {
+public class JSONNumber implements JSONValue {
     public enum NumberType {
         INTEGER,
         LONG,
@@ -11,31 +11,36 @@ public class JSONNumber {
         BIGDECIMAL
     }
 
-    private NumberType type;
+    private NumberType numberType;
     private Object value;
 
     public JSONNumber(Object value) {
         this.value = value;
 
         if (value instanceof Integer) {
-            type = NumberType.INTEGER;
+            numberType = NumberType.INTEGER;
         } else if (value instanceof Long) {
-            type = NumberType.LONG;
+            numberType = NumberType.LONG;
         } else if (value instanceof BigInteger) {
-            type = NumberType.BIGINTEGER;
+            numberType = NumberType.BIGINTEGER;
         } else if (value instanceof Double) {
-            type = NumberType.DOUBLE;
+            numberType = NumberType.DOUBLE;
         } else {
-            type = NumberType.BIGDECIMAL;
+            numberType = NumberType.BIGDECIMAL;
         }
     }
 
-    public NumberType getType() {
-        return type;
+    public NumberType getNumberType() {
+        return numberType;
     }
 
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public String format(int indent) {
+        return value.toString();
     }
 
     @Override
