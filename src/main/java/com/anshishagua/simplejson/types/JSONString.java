@@ -1,4 +1,4 @@
-package com.anshishagua.simplejson;
+package com.anshishagua.simplejson.types;
 
 public class JSONString {
     private String value;
