@@ -1,4 +1,4 @@
-package com.anshishagua.simplejson;
+package com.anshishagua.simplejson.types;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,9 @@
 package com.anshishagua.simplejson;
 
+import com.anshishagua.simplejson.types.JSONArray;
+import com.anshishagua.simplejson.types.JSONNull;
+import com.anshishagua.simplejson.types.JSONObject;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -150,9 +154,7 @@ class JSONScanner {
         while (hasNext()) {
             skipSpaces();
 
-            char ch = json.charAt(index);
-
-            if (ch == ']') {
+            if (json.charAt(index) == ']') {
                 ++index;
                 break;
             }
@@ -161,13 +163,13 @@ class JSONScanner {
 
             skipSpaces();
 
-            if (ch == ',') {
+            if (json.charAt(index) == ',') {
                 ++index;
-            } else if (ch == ']') {
+            } else if (json.charAt(index) == ']') {
                 ++index;
                 break;
             } else {
-                throw new JSONException("Invalid char for json array: " + ch);
+                throw new JSONException("Invalid char for json array: " + json.charAt(index));
             }
         }
 

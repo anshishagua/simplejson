@@ -1,5 +1,8 @@
 package com.anshishagua.simplejson;
 
+import com.anshishagua.simplejson.types.JSONArray;
+import com.anshishagua.simplejson.types.JSONObject;
+
 import java.util.Objects;
 
 public class JSON {

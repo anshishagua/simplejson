@@ -30,4 +30,11 @@ public class JSONTest {
 
         Assert.assertEquals("null", value.toString());
     }
+
+    @Test
+    public void testFormat() {
+        String json = "[1,2,3]";
+
+        System.out.println(JSON.format(json));
+    }
 }
