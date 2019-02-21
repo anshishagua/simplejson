@@ -1,6 +1,6 @@
 package com.anshishagua.simplejson.types;
 
-public class JSONString {
+public class JSONString implements JSONValue {
     private String value;
 
     public JSONString(String value) {
@@ -9,6 +9,11 @@ public class JSONString {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String format(int indent) {
+        return String.format("\"%s\"", value);
     }
 
     @Override

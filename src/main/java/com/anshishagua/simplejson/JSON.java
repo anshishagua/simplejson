@@ -2,11 +2,12 @@ package com.anshishagua.simplejson;
 
 import com.anshishagua.simplejson.types.JSONArray;
 import com.anshishagua.simplejson.types.JSONObject;
+import com.anshishagua.simplejson.types.JSONValue;
 
 import java.util.Objects;
 
 public class JSON {
-    public static Object parse(String json) {
+    public static JSONValue parse(String json) {
         JSONScanner scanner = new JSONScanner(json);
 
         return scanner.parse();
@@ -39,24 +40,8 @@ public class JSON {
     public static String format(String json) {
         Objects.requireNonNull(json);
 
-        Object object = parse(json);
+        JSONValue jsonValue = parse(json);
 
-        if (!(object instanceof JSONArray) && !(object instanceof JSONObject)) {
-            return object.toString();
-        }
-
-        if (object instanceof JSONArray) {
-
-        }
-
-        if (object instanceof JSONObject) {
-
-        }
-
-        if (object instanceof String) {
-            return "\"" + object.toString() + "\"";
-        }
-
-        return object.toString();
+        return jsonValue.format(0);
     }
 }

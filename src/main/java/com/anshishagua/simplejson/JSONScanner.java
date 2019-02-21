@@ -1,8 +1,12 @@
 package com.anshishagua.simplejson;
 
 import com.anshishagua.simplejson.types.JSONArray;
+import com.anshishagua.simplejson.types.JSONBoolean;
 import com.anshishagua.simplejson.types.JSONNull;
+import com.anshishagua.simplejson.types.JSONNumber;
 import com.anshishagua.simplejson.types.JSONObject;
+import com.anshishagua.simplejson.types.JSONString;
+import com.anshishagua.simplejson.types.JSONValue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -55,7 +59,7 @@ class JSONScanner {
         return true;
     }
 
-    public Object parse() {
+    public JSONValue parse() {
         skipSpaces();
 
         if (!hasNext()) {
@@ -85,7 +89,7 @@ class JSONScanner {
         }
     }
 
-    public String parseJSONString() {
+    public JSONString parseJSONString() {
         if (!hasNext() || json.charAt(index) != '"') {
             throw new JSONException(String.format("Valid start char %c at pos %d for json string",
                     json.charAt(index), index));
@@ -131,7 +135,7 @@ class JSONScanner {
                     }
                 case '"':
                     ++index;
-                    return builder.toString();
+                    return new JSONString(builder.toString());
                 default:
                     builder.append(ch);
                     ++index;
@@ -173,7 +177,7 @@ class JSONScanner {
             }
         }
 
-        JSONArray jsonArray = new JSONArray(values.toArray(new Object[0]));
+        JSONArray jsonArray = new JSONArray(values.toArray(new JSONValue[0]));
 
         return jsonArray;
     }
@@ -197,7 +201,7 @@ class JSONScanner {
                 return jsonObject;
             }
 
-            String key = parseJSONString();
+            JSONString key = parseJSONString();
 
             skipSpaces();
 
@@ -208,9 +212,9 @@ class JSONScanner {
 
             ++index;
 
-            Object value = parse();
+            JSONValue value = parse();
 
-            jsonObject.put(key, value);
+            jsonObject.put(key.getValue(), value);
 
             skipSpaces();
 
@@ -232,7 +236,7 @@ class JSONScanner {
         throw new JSONException("Missing end } for json object");
     }
 
-    public Boolean parseJSONBoolean() {
+    public JSONBoolean parseJSONBoolean() {
         if (!hasNext() || (json.charAt(index) != 't' && json.charAt(index) != 'f')) {
             throw new JSONException(String.format("Invalid char %c at pos %d for json boolean",
                     json.charAt(index), index));
@@ -253,7 +257,7 @@ class JSONScanner {
                 throw new JSONException(String.format("Invalid true value: %s", builder.toString()));
             }
 
-            return true;
+            return JSONBoolean.TRUE;
         }
 
         StringBuilder builder = new StringBuilder();
@@ -267,7 +271,7 @@ class JSONScanner {
             throw new JSONException(String.format("Invalid false value: %s", builder.toString()));
         }
 
-        return false;
+        return JSONBoolean.FALSE;
     }
 
     public JSONNull parseJSONNull() {
@@ -290,7 +294,7 @@ class JSONScanner {
         return JSONNull.NULL;
     }
 
-    public Object parseJSONNumber() {
+    public JSONNumber parseJSONNumber() {
         StringBuilder builder = new StringBuilder();
 
         if (index == json.length()) {
@@ -313,26 +317,26 @@ class JSONScanner {
 
         if (builder.indexOf(".") >= 0) {
             try {
-                return Double.parseDouble(builder.toString());
+                return new JSONNumber(Double.parseDouble(builder.toString()));
             } catch (NumberFormatException ex) {
 
             }
 
-            return new BigDecimal(builder.toString());
+            return new JSONNumber(new BigDecimal(builder.toString()));
         } else {
             try {
-                return Integer.parseInt(builder.toString());
+                return new JSONNumber(Integer.parseInt(builder.toString()));
             } catch (NumberFormatException ex) {
 
             }
 
             try {
-                return Long.parseLong(builder.toString());
+                return new JSONNumber(Long.parseLong(builder.toString()));
             } catch (NumberFormatException ex) {
 
             }
 
-            return new BigInteger(builder.toString());
+            return new JSONNumber(new BigInteger(builder.toString()));
         }
     }
 }
