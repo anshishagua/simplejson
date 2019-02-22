@@ -53,4 +53,9 @@ public class JSONString implements JSONValue {
     public boolean isObject() {
         return false;
     }
+
+    @Override
+    public Object toObject() {
+        return value;
+    }
 }

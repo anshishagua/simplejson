@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.utils.StringUtils;
+
 public class JSONBoolean implements JSONValue {
     public static final JSONBoolean TRUE = new JSONBoolean(true);
     public static final JSONBoolean FALSE = new JSONBoolean(false);
@@ -12,7 +14,12 @@ public class JSONBoolean implements JSONValue {
 
     @Override
     public String format(int indent) {
-        return Boolean.toString(value);
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(StringUtils.repeat('\t', indent));
+        builder.append(value);
+
+        return builder.toString();
     }
 
 
@@ -24,5 +31,10 @@ public class JSONBoolean implements JSONValue {
     @Override
     public boolean isObject() {
         return false;
+    }
+
+    @Override
+    public Object toObject() {
+        return value;
     }
 }

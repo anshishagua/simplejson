@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.utils.StringUtils;
+
 public class JSONNull implements JSONValue {
     public static final JSONNull NULL = new JSONNull();
 
@@ -9,7 +11,12 @@ public class JSONNull implements JSONValue {
 
     @Override
     public String format(int indent) {
-        return null;
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(StringUtils.repeat('\t', indent));
+        builder.append("null");
+
+        return builder.toString();
     }
 
     @Override
@@ -20,5 +27,10 @@ public class JSONNull implements JSONValue {
     @Override
     public boolean isObject() {
         return false;
+    }
+
+    @Override
+    public Object toObject() {
+        return null;
     }
 }

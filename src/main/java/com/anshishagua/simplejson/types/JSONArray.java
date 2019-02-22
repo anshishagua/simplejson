@@ -23,6 +23,10 @@ public class JSONArray implements JSONValue {
         values.addAll(Arrays.asList(objects));
     }
 
+    public int length() {
+        return values.size();
+    }
+
     public JSONValue get(int index) {
         return values.get(index);
     }
@@ -75,5 +79,16 @@ public class JSONArray implements JSONValue {
     @Override
     public boolean isObject() {
         return true;
+    }
+
+    @Override
+    public Object toObject() {
+        List<Object> list = new ArrayList<>(values.size());
+
+        for (JSONValue jsonValue : values) {
+            list.add(jsonValue.toObject());
+        }
+
+        return list;
     }
 }
