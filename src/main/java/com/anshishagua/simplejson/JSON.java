@@ -37,6 +37,12 @@ public class JSON {
         return (JSONArray) object;
     }
 
+    public static <T> T parse(String json, Class<T> clazz) {
+        JSONValue jsonValue = JSON.parse(json);
+
+        return null;
+    }
+
     public static String format(String json) {
         Objects.requireNonNull(json);
 

@@ -1,9 +1,15 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.utils.StringUtils;
+
+import java.util.Objects;
+
 public class JSONString implements JSONValue {
-    private String value;
+    private final String value;
 
     public JSONString(String value) {
+        Objects.requireNonNull(value);
+
         this.value = value;
     }
 
@@ -12,12 +18,39 @@ public class JSONString implements JSONValue {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof JSONString)) {
+            return false;
+        }
+
+        JSONString jsonString = (JSONString) obj;
+
+        return jsonString.value.equals(value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
     public String format(int indent) {
-        return String.format("\"%s\"", value);
+        StringBuilder builder = new StringBuilder();
+        builder.append(StringUtils.repeat('\t', indent));
+        builder.append("\"");
+        builder.append(value);
+        builder.append("\"");
+
+        return builder.toString();
     }
 
     @Override
     public String toString() {
         return "\"" + value + "\"";
+    }
+
+    @Override
+    public boolean isObject() {
+        return false;
     }
 }

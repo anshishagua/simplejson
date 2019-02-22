@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.utils.StringUtils;
+
 import java.math.BigInteger;
 
 public class JSONNumber implements JSONValue {
@@ -40,11 +42,21 @@ public class JSONNumber implements JSONValue {
 
     @Override
     public String format(int indent) {
-        return value.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append(StringUtils.repeat('\t', indent));
+
+        builder.append(value);
+
+        return builder.toString();
     }
 
     @Override
     public String toString() {
         return value.toString();
+    }
+
+    @Override
+    public boolean isObject() {
+        return false;
     }
 }

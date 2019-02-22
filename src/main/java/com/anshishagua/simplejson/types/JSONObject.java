@@ -1,46 +1,56 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.utils.StringUtils;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class JSONObject implements JSONValue {
-    private Map<String, JSONValue> map;
+    private Map<JSONString, JSONValue> map;
 
     public JSONObject() {
         map = new HashMap<>();
     }
 
-    public JSONObject(Map<String, JSONValue> map) {
+    public JSONObject(Map<JSONString, JSONValue> map) {
         this.map = new HashMap<>();
         this.map.putAll(map);
     }
 
-    public void put(String key, JSONValue value) {
+    public void put(JSONString key, JSONValue value) {
         map.put(key, value);
     }
 
-    public JSONValue get(String key) {
+    public JSONValue get(JSONString key) {
         return map.get(key);
     }
 
     @Override
     public String format(int indent) {
-        StringBuilder builder = new StringBuilder("{");
+        StringBuilder builder = new StringBuilder("{\n");
 
-        Iterator<Map.Entry<String, JSONValue>> iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<JSONString, JSONValue>> iterator = map.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Map.Entry<String, JSONValue> entry = iterator.next();
+            Map.Entry<JSONString, JSONValue> entry = iterator.next();
 
-            builder.append("\"" + entry.getKey() + "\": ");
-            builder.append(entry.getValue().format(indent));
+            builder.append(entry.getKey().format(indent + 1) + ": ");
+
+            if (entry.getValue().isObject()) {
+                builder.append(entry.getValue().format(indent + 1));
+            } else {
+                builder.append(entry.getValue().format(0));
+            }
 
             if (iterator.hasNext()) {
-                builder.append(", ");
+                builder.append(",");
             }
+
+            builder.append("\n");
         }
 
+        builder.append(StringUtils.repeat('\t', indent));
         builder.append("}");
 
         return builder.toString();
@@ -49,5 +59,10 @@ public class JSONObject implements JSONValue {
     @Override
     public String toString() {
         return map.toString();
+    }
+
+    @Override
+    public boolean isObject() {
+        return true;
     }
 }

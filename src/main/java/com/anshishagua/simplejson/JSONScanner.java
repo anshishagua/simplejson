@@ -214,7 +214,7 @@ class JSONScanner {
 
             JSONValue value = parse();
 
-            jsonObject.put(key.getValue(), value);
+            jsonObject.put(new JSONString(key.getValue()), value);
 
             skipSpaces();
 

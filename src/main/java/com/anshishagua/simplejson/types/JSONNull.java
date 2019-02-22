@@ -16,4 +16,9 @@ public class JSONNull implements JSONValue {
     public String toString() {
         return "null";
     }
+
+    @Override
+    public boolean isObject() {
+        return false;
+    }
 }
