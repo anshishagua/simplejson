@@ -10,4 +10,5 @@ package com.anshishagua.simplejson.types;
 public interface JSONValue {
     String format(int indent);
     boolean isObject();
+    Object toObject();
 }

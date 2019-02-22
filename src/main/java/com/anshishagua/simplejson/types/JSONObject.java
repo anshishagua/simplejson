@@ -65,4 +65,15 @@ public class JSONObject implements JSONValue {
     public boolean isObject() {
         return true;
     }
+
+    @Override
+    public Object toObject() {
+        Map<String, Object> result = new HashMap<>();
+
+        for (JSONString key : map.keySet()) {
+            result.put(key.toString(), map.get(key).toObject());
+        }
+
+        return result;
+    }
 }
