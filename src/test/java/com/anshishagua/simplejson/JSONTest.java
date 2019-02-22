@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class JSONTest {
@@ -54,28 +53,22 @@ public class JSONTest {
         person.setName("bbbb");
         person.setPersons(Arrays.asList(new Person(333, "aaaaaa")));
 
-        System.out.println(JSON.toJSONString(person));
+        double [] a = {1.234234, 3, 5};
+        System.out.println(JSON.toJSONString(a));
     }
 
     @Test
     public void testParseJSON() throws IOException {
         String json = "{\"id\": 111, \"name\": \"bbbb\",\"success\": true, \"fff\": null}";
 
-        //Set person = JSON.parse(json, Set.class);
+        json = JSONUtils.loadResource("person.json");
+        System.out.println(json);
+        Person person = JSON.parse(json, Person.class);
 
-        //System.out.println(person);
+        System.out.println(person);
 
         json = "[1, 3, 5]";
 
-        System.out.println(JSON.parse(json, List.class));
-
-        Set<Integer> a = new HashSet<>();
-        a.add(1);
-
-        System.out.println(a.getClass().getComponentType());
-
-        json = JSONUtils.load(Paths.get("/Users/xiaoli/IdeaProjects/simplejson/src/main/resources/a.json"));
-
-        System.out.println(JSON.parse(json));
+        System.out.println(Person.class.getFields().length);
     }
 }
