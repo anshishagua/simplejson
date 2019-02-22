@@ -20,4 +20,9 @@ public class JSONBoolean implements JSONValue {
     public String toString() {
         return Boolean.toString(value);
     }
+
+    @Override
+    public boolean isObject() {
+        return false;
+    }
 }

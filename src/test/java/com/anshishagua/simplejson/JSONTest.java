@@ -33,7 +33,7 @@ public class JSONTest {
 
     @Test
     public void testFormat() {
-        String json = "[1,    2,    3, {\"a\": 111}]";
+        String json = "{\"b\": {\"a\": 111, \"b\": [1, 3, 3]}, \"c\": [1, 3,   5], \"d\": false}";
 
         System.out.println(JSON.format(json));
     }

@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -31,18 +33,21 @@ public class JSONArray implements JSONValue {
 
     @Override
     public String format(int indent) {
-        StringBuilder builder = new StringBuilder("[");
+        StringBuilder builder = new StringBuilder("[\n");
 
         Iterator<JSONValue> iterator = values.iterator();
 
         while (iterator.hasNext()) {
-            builder.append(iterator.next().format(indent));
+            builder.append(iterator.next().format(indent + 1));
 
             if (iterator.hasNext()) {
-                builder.append(", ");
+                builder.append(",");
             }
+
+            builder.append("\n");
         }
 
+        builder.append(StringUtils.repeat('\t', indent));
         builder.append("]");
 
         return builder.toString();
@@ -65,5 +70,10 @@ public class JSONArray implements JSONValue {
         builder.append("]");
 
         return builder.toString();
+    }
+
+    @Override
+    public boolean isObject() {
+        return true;
     }
 }
