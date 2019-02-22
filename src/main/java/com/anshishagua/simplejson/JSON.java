@@ -6,13 +6,16 @@ import com.anshishagua.simplejson.types.JSONNull;
 import com.anshishagua.simplejson.types.JSONObject;
 import com.anshishagua.simplejson.types.JSONString;
 import com.anshishagua.simplejson.types.JSONValue;
+import com.anshishagua.simplejson.utils.TypeUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -127,7 +130,7 @@ public class JSON {
 
             try {
                 if (value.isObject()) {
-                    field.set(object, parse(value, field.getClass()));
+                    field.set(object, parse(value, field.getType()));
                 } else {
                     field.set(object, value.toObject());
                 }
@@ -142,6 +145,64 @@ public class JSON {
     public static String toJSONString(Object object) {
         if (object == null) {
             return "null";
+        }
+
+        Class<?> clazz = object.getClass();
+
+        if (TypeUtils.isPrimitive(clazz)) {
+            if (object.getClass() == char.class) {
+                return "\"" + object + "\"";
+            } else {
+                return object.toString();
+            }
+        }
+
+        if (TypeUtils.isPrimitiveWrapper(clazz)) {
+            if (object.getClass() == Character.class) {
+                return "\"" + object + "\"";
+            } else {
+                return object.toString();
+            }
+        }
+
+        if (TypeUtils.isPrimitiveArray(clazz)) {
+            List<Object> list = new ArrayList<>();
+
+            if (clazz == boolean[].class) {
+                for (boolean value : (boolean[]) object) {
+                    list.add(value);
+                }
+            } else if (clazz == byte[].class) {
+                for (byte value : (byte[]) object) {
+                    list.add(value);
+                }
+            } else if (clazz == char[].class) {
+                for (char value : (char[]) object) {
+                    list.add(String.valueOf(value));
+                }
+            } else if (clazz == short[].class) {
+                for (short value : (short[]) object) {
+                    list.add(value);
+                }
+            } else if (clazz == int[].class) {
+                for (int value : (int[]) object) {
+                    list.add(value);
+                }
+            } else if (clazz == long[].class) {
+                for (long value : (long[]) object) {
+                    list.add(value);
+                }
+            } else if (clazz == float[].class) {
+                for (float value : (float[]) object) {
+                    list.add(value);
+                }
+            } else {
+                for (double value : (double []) object) {
+                    list.add(value);
+                }
+            }
+
+            return toJSONString(list);
         }
 
         if (object instanceof JSONValue) {
@@ -195,8 +256,6 @@ public class JSON {
 
             return builder.toString();
         }
-
-        Class<?> clazz = object.getClass();
 
         Field [] fields = clazz.getDeclaredFields();
 
