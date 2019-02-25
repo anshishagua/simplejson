@@ -12,6 +12,7 @@ import com.anshishagua.simplejson.utils.TypeUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,6 +78,19 @@ public class JSON {
 
         if (clazz == String.class) {
             return (T) ((JSONString) jsonValue).getValue();
+        }
+
+        if (clazz.isEnum()) {
+            try {
+                Method method = clazz.getMethod("valueOf", String.class);
+                method.setAccessible(true);
+
+                JSONString jsonString = (JSONString) jsonValue;
+
+                return (T) method.invoke(null, jsonString.getValue());
+            } catch (Exception ex) {
+                throw new JSONException(ex);
+            }
         }
 
         if (TypeUtils.isPrimitive(clazz)) {
@@ -353,6 +367,18 @@ public class JSON {
             }
 
             return toJSONString(list);
+        }
+
+        if (clazz.isEnum()) {
+            Method method = null;
+
+            try {
+                method = clazz.getMethod("name", null);
+                method.setAccessible(true);
+                return (String) method.invoke(object);
+            } catch (Exception ex) {
+                throw new JSONException(ex);
+            }
         }
 
         if (object instanceof JSONValue) {

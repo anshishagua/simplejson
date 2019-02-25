@@ -82,5 +82,9 @@ public class JSONTest {
         String [] sss = JSON.parse("[\"aaa\", \"bbb\"]", String[].class);
 
         System.out.println(Arrays.toString(sss));
+
+        System.out.println(JSON.toJSONString(Role.ADMIN));
+
+        System.out.println(JSON.parse("\"ADMIN\"", Role.class));
     }
 }
