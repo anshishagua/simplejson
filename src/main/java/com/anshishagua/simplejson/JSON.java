@@ -8,15 +8,21 @@ import com.anshishagua.simplejson.types.JSONNumber;
 import com.anshishagua.simplejson.types.JSONObject;
 import com.anshishagua.simplejson.types.JSONString;
 import com.anshishagua.simplejson.types.JSONValue;
+import com.anshishagua.simplejson.utils.ReflectionUtils;
 import com.anshishagua.simplejson.utils.TypeUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -78,6 +84,41 @@ public class JSON {
 
         if (clazz == String.class) {
             return (T) ((JSONString) jsonValue).getValue();
+        }
+
+        if (clazz == LocalDate.class) {
+            JSONString jsonString = (JSONString) jsonValue;
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            return (T) LocalDate.parse(jsonString.getValue(), formatter);
+        }
+
+        if (clazz == LocalDateTime.class) {
+            JSONString jsonString = (JSONString) jsonValue;
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            return (T) LocalDateTime.parse(jsonString.getValue(), formatter);
+        }
+
+        if (clazz == LocalTime.class) {
+            JSONString jsonString = (JSONString) jsonValue;
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+            return (T) LocalTime.parse(jsonString.getValue(), formatter);
+        }
+
+        if (clazz == Date.class) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            JSONString jsonString = (JSONString) jsonValue;
+
+            LocalDateTime localDateTime = LocalDateTime.parse(jsonString.getValue(), formatter);
+
+            Date date = new Date(localDateTime.toInstant(ZoneOffset.of(ZoneId.systemDefault().toString())).toEpochMilli());
+
+            return (T) date;
         }
 
         if (clazz.isEnum()) {
@@ -247,16 +288,6 @@ public class JSON {
                 }
             } else {
                 return (T) toArray(jsonArray, clazz.getComponentType());
-
-                /*
-                Object [] result = new Object[jsonArray.length()];
-
-                for (int i = 0; i < jsonArray.length(); ++i) {
-                    result[i] = jsonArray.get(i).toObject();
-                }
-
-                return (T) result;
-                */
             }
         }
 
@@ -296,7 +327,28 @@ public class JSON {
                 if (value.isObject()) {
                     field.set(object, parse(value, field.getType()));
                 } else {
-                    field.set(object, value.toObject());
+                    if (field.getType().isEnum()) {
+                        JSONString jsonString = (JSONString) value;
+
+                        field.set(object, ReflectionUtils.enumValueOf(field.getType(), jsonString.getValue()));
+                    } else if (field.getType() == LocalDate.class) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        JSONString jsonString = (JSONString) value;
+
+                        field.set(object, LocalDate.parse(jsonString.getValue(), formatter));
+                    } else if (field.getType() == LocalDateTime.class) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        JSONString jsonString = (JSONString) value;
+
+                        field.set(object, LocalDateTime.parse(jsonString.getValue(), formatter));
+                    } else if (field.getType() == LocalTime.class) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                        JSONString jsonString = (JSONString) value;
+
+                        field.set(object, LocalTime.parse(jsonString.getValue(), formatter));
+                    } else {
+                        field.set(object, value.toObject());
+                    }
                 }
             } catch (Exception ex) {
                 throw new JSONException(ex);
@@ -431,6 +483,10 @@ public class JSON {
             builder.append("]");
 
             return builder.toString();
+        }
+
+        if (!TypeUtils.isUserDefinedObject(clazz)) {
+            throw new JSONException("Unsupported type:" + clazz.getName());
         }
 
         Field [] fields = clazz.getDeclaredFields();

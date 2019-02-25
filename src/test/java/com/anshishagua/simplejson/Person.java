@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +10,9 @@ class Person {
     private int id;
     private String name;
     private boolean success;
-    private List<Person> persons = new ArrayList<>();
+    private Sex sex;
+    private Address[] addresses;
+    private LocalDate birthday;
 
     public Person() {
 
@@ -35,12 +39,28 @@ class Person {
         return name;
     }
 
-    public void setPersons(List<Person> persons) {
-        this.persons = persons;
+    public Sex getSex() {
+        return sex;
     }
 
-    public List<Person> getPersons() {
-        return persons;
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
+
+    public Address[] getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Address[] addresses) {
+        this.addresses = addresses;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
     @Override
@@ -49,7 +69,9 @@ class Person {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", success=" + success +
-                ", persons=" + persons +
+                ", sex=" + sex +
+                ", addresses=" + Arrays.toString(addresses) +
+                ", birthday=" + birthday +
                 '}';
     }
 }

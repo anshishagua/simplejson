@@ -50,7 +50,7 @@ public class TypeUtils {
                 clazz == float[].class || clazz == double[].class;
     }
 
-    public static Object[] primitiveArrayToObjectArray(Object object) {
-        return null;
+    public static boolean isUserDefinedObject(Class<?> clazz) {
+        return clazz.getPackage().getName().startsWith("java");
     }
 }

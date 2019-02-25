@@ -7,7 +7,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +55,6 @@ public class JSONTest {
         Person person = new Person();
         person.setId(111);
         person.setName("bbbb");
-        person.setPersons(Arrays.asList(new Person(333, "aaaaaa")));
 
         double [] a = {1.234234, 3, 5};
         System.out.println(JSON.toJSONString(a));
@@ -86,5 +88,16 @@ public class JSONTest {
         System.out.println(JSON.toJSONString(Role.ADMIN));
 
         System.out.println(JSON.parse("\"ADMIN\"", Role.class));
+
+        System.out.println(JSON.parse("\"2018-01-01 11:11:11\"", LocalDateTime.class));
+    }
+
+    @Test
+    public void aaaa() throws IOException {
+        String json = JSONUtils.loadResource("person.json");
+
+        System.out.println(JSON.parse(json, Person.class));
+
+        System.out.println(JSON.parseObject(JSONUtils.loadResource("test.json")));
     }
 }
