@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -359,8 +360,16 @@ public class JSON {
     }
 
     public static String toJSONString(Object object) {
+        return toJSONString(object, new IdentityHashMap<>());
+    }
+
+    private static String toJSONString(Object object, IdentityHashMap<Object, List<Object>> map) {
         if (object == null) {
             return "null";
+        }
+
+        if (map.containsKey(object)) {
+            throw new JSONException("Circular reference for object " + object);
         }
 
         Class<?> clazz = object.getClass();
@@ -418,7 +427,7 @@ public class JSON {
                 }
             }
 
-            return toJSONString(list);
+            return toJSONString(list, map);
         }
 
         if (clazz.isEnum()) {
@@ -431,6 +440,12 @@ public class JSON {
             } catch (Exception ex) {
                 throw new JSONException(ex);
             }
+        }
+
+        if (clazz == LocalDate.class) {
+            LocalDate localDate = (LocalDate) object;
+
+            return "\"" + localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\"";
         }
 
         if (object instanceof JSONValue) {
@@ -453,9 +468,9 @@ public class JSON {
             while (iterator.hasNext()) {
                 Map.Entry<?, ?> entry = iterator.next();
 
-                builder.append(toJSONString(entry.getKey()));
+                builder.append(toJSONString(entry.getKey(), map));
                 builder.append(": ");
-                builder.append(toJSONString(entry.getValue()));
+                builder.append(toJSONString(entry.getValue(), map));
 
                 if (iterator.hasNext()) {
                     builder.append(", ");
@@ -473,7 +488,7 @@ public class JSON {
             Iterator<Object> iterator = ((Collection) object).iterator();
 
             while (iterator.hasNext()) {
-                builder.append(toJSONString(iterator.next()));
+                builder.append(toJSONString(iterator.next(), map));
 
                 if (iterator.hasNext()) {
                     builder.append(", ");
@@ -489,6 +504,8 @@ public class JSON {
             throw new JSONException("Unsupported type:" + clazz.getName());
         }
 
+        map.put(object, new ArrayList<>());
+
         Field [] fields = clazz.getDeclaredFields();
 
         StringBuilder builder = new StringBuilder("{");
@@ -500,6 +517,7 @@ public class JSON {
 
             try {
                 value = field.get(object);
+                map.get(object).add(value);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
                 throw new JSONException(ex);
             }
@@ -523,7 +541,7 @@ public class JSON {
             builder.append("\"");
             builder.append(fieldName);
             builder.append("\": ");
-            builder.append(toJSONString(value));
+            builder.append(toJSONString(value, map));
 
             if (i != fields.length - 1) {
                 builder.append(", ");

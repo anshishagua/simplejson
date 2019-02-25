@@ -51,6 +51,6 @@ public class TypeUtils {
     }
 
     public static boolean isUserDefinedObject(Class<?> clazz) {
-        return clazz.getPackage().getName().startsWith("java");
+        return !clazz.getName().startsWith("java");
     }
 }

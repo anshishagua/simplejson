@@ -5,8 +5,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.IdentityHashMap;
 
 public class JSONTest {
     @Test
@@ -92,5 +94,22 @@ public class JSONTest {
         System.out.println(JSON.parse(json, Person.class));
 
         System.out.println(JSON.parseObject(JSONUtils.loadResource("test.json")));
+
+        Person person = new Person();
+        person.setId(1);
+        person.setName("benben");
+        Address address = new Address();
+        address.setCity("Beijing");
+        address.setCountry("China");
+        address.setStreet("street");
+        Address[] addresses = new Address[] {address};
+        person.setAddresses(addresses);
+
+        person.setBirthday(LocalDate.now());
+        person.setParents(Arrays.asList(person));
+
+        System.out.println(JSON.toJSONString(person));
+
+        IdentityHashMap<Object, Object> map;
     }
 }

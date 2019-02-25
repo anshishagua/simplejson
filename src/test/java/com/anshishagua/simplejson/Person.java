@@ -12,6 +12,7 @@ class Person {
     private Sex sex;
     private Address[] addresses;
     private LocalDate birthday;
+    private List<Person> parents;
 
     public Person() {
 
@@ -62,6 +63,14 @@ class Person {
         this.birthday = birthday;
     }
 
+    public List<Person> getParents() {
+        return parents;
+    }
+
+    public void setParents(List<Person> parents) {
+        this.parents = parents;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -71,6 +80,7 @@ class Person {
                 ", sex=" + sex +
                 ", addresses=" + Arrays.toString(addresses) +
                 ", birthday=" + birthday +
+                ", parents=" + null +
                 '}';
     }
 }
