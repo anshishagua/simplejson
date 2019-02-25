@@ -78,3 +78,15 @@ fragment EXP
 WS
    : [ \t\n\r] + -> skip
 ;
+
+基本类型: boolean, byte, char, short, int, long, float, double
+基本数组类型: boolean[], byte[], char[], short[], int[], long[], float[], double[]
+枚举类型: Enum
+
+JSON数据类型:
+
+1. null
+2. boolean: true, false
+3. number
+4. array
+5. object
