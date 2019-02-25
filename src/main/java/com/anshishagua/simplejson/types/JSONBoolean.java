@@ -12,6 +12,10 @@ public class JSONBoolean implements JSONValue {
         this.value = value;
     }
 
+    public boolean getValue() {
+        return value;
+    }
+
     @Override
     public String format(int indent) {
         StringBuilder builder = new StringBuilder();

@@ -2,12 +2,15 @@ package com.anshishagua.simplejson;
 
 import com.anshishagua.simplejson.annotation.JSONField;
 import com.anshishagua.simplejson.types.JSONArray;
+import com.anshishagua.simplejson.types.JSONBoolean;
 import com.anshishagua.simplejson.types.JSONNull;
+import com.anshishagua.simplejson.types.JSONNumber;
 import com.anshishagua.simplejson.types.JSONObject;
 import com.anshishagua.simplejson.types.JSONString;
 import com.anshishagua.simplejson.types.JSONValue;
 import com.anshishagua.simplejson.utils.TypeUtils;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,9 +60,63 @@ public class JSON {
         return parse(JSON.parse(json), clazz);
     }
 
+    private static <T> T[] toArray(JSONArray jsonArray, Class<T> clazz) {
+        T[] result = (T[]) Array.newInstance(clazz, jsonArray.length());
+
+        for (int i = 0; i < jsonArray.length(); ++i) {
+            result[i] = parse(jsonArray.get(i), clazz);
+        }
+
+        return result;
+    }
+
     private static <T> T parse(JSONValue jsonValue, Class<T> clazz) {
         if (jsonValue instanceof JSONNull) {
             return null;
+        }
+
+        if (clazz == String.class) {
+            return (T) ((JSONString) jsonValue).getValue();
+        }
+
+        if (TypeUtils.isPrimitive(clazz)) {
+            if (clazz == boolean.class) {
+                return (T) (Boolean) ((JSONBoolean) jsonValue).getValue();
+            } else if (clazz == byte.class) {
+                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+            } else if (clazz == char.class) {
+                return (T) (Character) ((JSONString) jsonValue).getValue().charAt(0);
+            } else if (clazz == short.class) {
+                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+            } else if (clazz == int.class) {
+                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+            } else if (clazz == long.class) {
+                return (T) (Long) ((JSONNumber) jsonValue).getAsLong();
+            } else if (clazz == float.class) {
+                return (T) (Float) ((JSONNumber) jsonValue).getAsFloat();
+            } else if (clazz == double.class) {
+                return (T) (Double) ((JSONNumber) jsonValue).getAsDouble();
+            }
+        }
+
+        if (TypeUtils.isPrimitiveWrapper(clazz)) {
+            if (clazz == Boolean.class) {
+                return (T) (Boolean) ((JSONBoolean) jsonValue).getValue();
+            } else if (clazz == Byte.class) {
+                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+            } else if (clazz == Character.class) {
+                return (T) (Character) ((JSONString) jsonValue).getValue().charAt(0);
+            } else if (clazz == Short.class) {
+                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+            } else if (clazz == Integer.class) {
+                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+            } else if (clazz == Long.class) {
+                return (T) (Long) ((JSONNumber) jsonValue).getAsLong();
+            } else if (clazz == Float.class) {
+                return (T) (Float) ((JSONNumber) jsonValue).getAsFloat();
+            } else if (clazz == Double.class) {
+                return (T) (Double) ((JSONNumber) jsonValue).getAsDouble();
+            }
         }
 
         if (Collection.class.isAssignableFrom(clazz)) {
@@ -94,6 +151,99 @@ public class JSON {
             JSONObject jsonObject = (JSONObject) jsonValue;
 
             return (T) jsonObject.toObject();
+        }
+
+        if (clazz.isArray()) {
+            JSONArray jsonArray = (JSONArray) jsonValue;
+
+            if (TypeUtils.isPrimitiveArray(clazz)) {
+                Class<?> componentType = clazz.getComponentType();
+                if (componentType == boolean.class) {
+                    boolean[] result = new boolean[jsonArray.length()];
+
+                    for (int i = 0 ; i < jsonArray.length(); ++i) {
+                        JSONBoolean jsonBoolean = (JSONBoolean) jsonArray.get(i);
+
+                        result[i] = jsonBoolean == JSONBoolean.TRUE ? true : false;
+                    }
+
+                    return (T) result;
+                } else if (componentType == byte.class) {
+                    byte[] result = new byte[jsonArray.length()];
+
+                    for (int i = 0 ; i < jsonArray.length(); ++i) {
+                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+
+                        result[i] = (byte) jsonNumber.getAsInteger();
+                    }
+
+                    return (T) result;
+                } else if (componentType == char.class) {
+
+                } else if (componentType == short.class) {
+                    short[] result = new short[jsonArray.length()];
+
+                    for (int i = 0 ; i < jsonArray.length(); ++i) {
+                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+
+                        result[i] = (short) jsonNumber.getAsInteger();
+                    }
+
+                    return (T) result;
+                } else if (componentType == int.class) {
+                    int[] result = new int[jsonArray.length()];
+
+                    for (int i = 0 ; i < jsonArray.length(); ++i) {
+                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+
+                        result[i] = jsonNumber.getAsInteger();
+                    }
+
+                    return (T) result;
+                } else if (componentType == long.class) {
+                    long[] result = new long[jsonArray.length()];
+
+                    for (int i = 0 ; i < jsonArray.length(); ++i) {
+                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+
+                        result[i] = jsonNumber.getAsLong();
+                    }
+
+                    return (T) result;
+                } else if (componentType == float.class) {
+                    float[] result = new float[jsonArray.length()];
+
+                    for (int i = 0 ; i < jsonArray.length(); ++i) {
+                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+
+                        result[i] = (float) jsonNumber.getAsDouble();
+                    }
+
+                    return (T) result;
+                } else if (componentType == double.class) {
+                    double[] result = new double[jsonArray.length()];
+
+                    for (int i = 0 ; i < jsonArray.length(); ++i) {
+                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+
+                        result[i] = jsonNumber.getAsDouble();
+                    }
+
+                    return (T) result;
+                }
+            } else {
+                return (T) toArray(jsonArray, clazz.getComponentType());
+
+                /*
+                Object [] result = new Object[jsonArray.length()];
+
+                for (int i = 0; i < jsonArray.length(); ++i) {
+                    result[i] = jsonArray.get(i).toObject();
+                }
+
+                return (T) result;
+                */
+            }
         }
 
         JSONObject jsonObject = (JSONObject) jsonValue;

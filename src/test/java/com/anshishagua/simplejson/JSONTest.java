@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -70,5 +71,16 @@ public class JSONTest {
         json = "[1, 3, 5]";
 
         System.out.println(Person.class.getFields().length);
+    }
+
+    @Test
+    public void testParseToObject() {
+        double [] a = {1.234234, 3, 5};
+
+        Double[] array = JSON.parse("[1, 222]", Double[].class);
+
+        String [] sss = JSON.parse("[\"aaa\", \"bbb\"]", String[].class);
+
+        System.out.println(Arrays.toString(sss));
     }
 }

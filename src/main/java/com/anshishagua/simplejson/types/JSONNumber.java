@@ -2,6 +2,7 @@ package com.anshishagua.simplejson.types;
 
 import com.anshishagua.simplejson.utils.StringUtils;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class JSONNumber implements JSONValue {
@@ -38,6 +39,30 @@ public class JSONNumber implements JSONValue {
 
     public Object getValue() {
         return value;
+    }
+
+    public int getAsInteger() {
+        return ((Number) value).intValue();
+    }
+
+    public long getAsLong() {
+        return ((Number) value).longValue();
+    }
+
+    public double getAsDouble() {
+        return ((Number) value).doubleValue();
+    }
+
+    public float getAsFloat() {
+        return ((Number) value).floatValue();
+    }
+
+    public BigInteger getAsBigInt() {
+        return (BigInteger) value;
+    }
+
+    public BigDecimal getAsBigDecimal() {
+        return (BigDecimal) value;
     }
 
     @Override
