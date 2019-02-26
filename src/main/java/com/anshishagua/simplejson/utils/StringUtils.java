@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.utils;
 
+import java.util.Objects;
+
 public class StringUtils {
     public static String repeat(char ch, int count) {
         StringBuilder builder = new StringBuilder();
@@ -9,5 +11,11 @@ public class StringUtils {
         }
 
         return builder.toString();
+    }
+
+    public static String doubleQuote(Object object) {
+        Objects.requireNonNull(object);
+
+        return String.format("\"%s\"", object.toString());
     }
 }

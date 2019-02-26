@@ -9,6 +9,7 @@ import com.anshishagua.simplejson.types.JSONObject;
 import com.anshishagua.simplejson.types.JSONString;
 import com.anshishagua.simplejson.types.JSONValue;
 import com.anshishagua.simplejson.utils.ReflectionUtils;
+import com.anshishagua.simplejson.utils.StringUtils;
 import com.anshishagua.simplejson.utils.TypeUtils;
 
 import java.lang.reflect.Array;
@@ -376,7 +377,7 @@ public class JSON {
 
         if (TypeUtils.isPrimitive(clazz)) {
             if (object.getClass() == char.class) {
-                return "\"" + object + "\"";
+                return StringUtils.doubleQuote(object);
             } else {
                 return object.toString();
             }
@@ -384,7 +385,7 @@ public class JSON {
 
         if (TypeUtils.isPrimitiveWrapper(clazz)) {
             if (object.getClass() == Character.class) {
-                return "\"" + object + "\"";
+                return StringUtils.doubleQuote(object);
             } else {
                 return object.toString();
             }
@@ -436,7 +437,8 @@ public class JSON {
             try {
                 method = clazz.getMethod("name", null);
                 method.setAccessible(true);
-                return (String) method.invoke(object);
+
+                return StringUtils.doubleQuote((String) method.invoke(object));
             } catch (Exception ex) {
                 throw new JSONException(ex);
             }
@@ -445,7 +447,7 @@ public class JSON {
         if (clazz == LocalDate.class) {
             LocalDate localDate = (LocalDate) object;
 
-            return "\"" + localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\"";
+            return StringUtils.doubleQuote(localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         }
 
         if (object instanceof JSONValue) {
@@ -457,7 +459,7 @@ public class JSON {
         }
 
         if (object instanceof String) {
-            return "\"" + object + "\"";
+            return StringUtils.doubleQuote(object);
         }
 
         if (object instanceof Map) {
