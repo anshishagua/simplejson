@@ -28,4 +28,8 @@ public class StringUtils {
 
         return String.format("\"%s\"", object.toString());
     }
+
+    public static boolean isSpaceChar(char ch) {
+        return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || Character.isSpaceChar(ch);
+    }
 }

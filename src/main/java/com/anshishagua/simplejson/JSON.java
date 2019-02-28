@@ -36,7 +36,13 @@ public class JSON {
     public static JSONValue parse(String json) {
         JSONScanner scanner = new JSONScanner(json);
 
-        return scanner.parse();
+        JSONValue jsonValue = scanner.parse();
+
+        if (scanner.hasNext()) {
+            throw new JSONException("Extra input: " + json.substring(scanner.getIndex()));
+        }
+
+        return jsonValue;
     }
 
     public static JSONObject parseObject(String json) {
@@ -46,6 +52,10 @@ public class JSON {
 
         if (!(object instanceof JSONObject)) {
             throw new JSONException("Not json object");
+        }
+
+        if (scanner.hasNext()) {
+            throw new JSONException("Extra input: " + json.substring(scanner.getIndex()));
         }
 
         return (JSONObject) object;
@@ -58,6 +68,10 @@ public class JSON {
 
         if (!(object instanceof JSONArray)) {
             throw new JSONException("Not json array");
+        }
+
+        if (scanner.hasNext()) {
+            throw new JSONException("Extra input: " + json.substring(scanner.getIndex()));
         }
 
         return (JSONArray) object;

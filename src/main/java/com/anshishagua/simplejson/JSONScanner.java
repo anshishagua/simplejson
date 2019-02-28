@@ -7,6 +7,7 @@ import com.anshishagua.simplejson.types.JSONNumber;
 import com.anshishagua.simplejson.types.JSONObject;
 import com.anshishagua.simplejson.types.JSONString;
 import com.anshishagua.simplejson.types.JSONValue;
+import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -25,16 +26,42 @@ class JSONScanner {
         this.json = json;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
     private void skipSpaces() {
-        while (index < json.length() && Character.isSpaceChar(json.charAt(index))) {
+        while (index < json.length() && StringUtils.isSpaceChar(json.charAt(index))) {
             ++index;
         }
     }
 
-    private boolean hasNext() {
-        skipSpaces();
+    private Character getNextToken() {
+        while (index < json.length() && StringUtils.isSpaceChar(json.charAt(index))) {
+            ++index;
+        }
 
-        return index < json.length();
+        if (index == json.length()) {
+            return null;
+        }
+
+        return json.charAt(index);
+    }
+
+    public boolean hasNext() {
+        return getNextToken() != null;
+    }
+
+    private void testHasNext() {
+        if (!hasNext()) {
+            throw new JSONException("Expect char, but reach to end of json");
+        }
+    }
+
+    private void testHasNext(String message) {
+        if (!hasNext()) {
+            throw new JSONException(message);
+        }
     }
 
     private boolean isUnicode(String string) {
@@ -60,38 +87,47 @@ class JSONScanner {
     }
 
     public JSONValue parse() {
-        skipSpaces();
+        testHasNext();
 
-        if (!hasNext()) {
-            return null;
-        }
+        char ch = getNextToken();
 
-        char ch = json.charAt(index);
+        JSONValue jsonValue = null;
 
         switch (ch) {
-            case '{':
-                return parseJSONObject();
-            case '"':
-                return parseJSONString();
-            case '[':
-                return parseJSONArray();
+            case JSONConstants.LEFT_CURLY_BRACKET:
+                jsonValue = parseJSONObject();
+                break;
+            case JSONConstants.DOUBLE_QUOTE:
+                jsonValue = parseJSONString();
+                break;
+            case JSONConstants.LEFT_BRACKET:
+                jsonValue = parseJSONArray();
+                break;
             case 't':
             case 'f':
-                return parseJSONBoolean();
+                jsonValue = parseJSONBoolean();
+                break;
             case 'n':
-                return parseJSONNull();
+                jsonValue = parseJSONNull();
+                break;
             default:
                 if (Character.isDigit(ch) || ch == '-') {
-                    return parseJSONNumber();
+                    jsonValue = parseJSONNumber();
+                } else {
+                    throw new JSONException(String.format("Not valid char %c at pos:%d", ch, index));
                 }
-
-                throw new JSONException(String.format("Not valid char %c at pos:%d", ch, index));
         }
+
+        return jsonValue;
     }
 
     public JSONString parseJSONString() {
-        if (!hasNext() || json.charAt(index) != '"') {
-            throw new JSONException(String.format("Valid start char %c at pos %d for json string",
+        Character ch = null;
+
+        testHasNext();
+
+        if (getNextToken() != '"') {
+            throw new JSONException(String.format("Invalid start char %c at pos %d for json string",
                     json.charAt(index), index));
         }
 
@@ -99,21 +135,22 @@ class JSONScanner {
 
         StringBuilder builder = new StringBuilder();
 
-        while (index < json.length()) {
-            char ch = json.charAt(index);
+        while (hasNext()) {
+            ch = getNextToken();
 
             switch (ch) {
-                case '\\':
+                case JSONConstants.ESCAPCE_CHAR:
                     ++index;
-                    if (index == json.length()) {
-                        throw new JSONException("");
-                    }
 
-                    char escapeChar = json.charAt(index);
+                    testHasNext();
+
+                    char escapeChar = getNextToken();
+
                     if (escapeChar == '"' || escapeChar == '\b' || escapeChar == '\f' || escapeChar == '\t' ||
                             escapeChar == '\r' || escapeChar == '\n' || escapeChar == '\\') {
                         builder.append(escapeChar);
                         ++index;
+                        break;
                     } else if (escapeChar == 'u') {
                         ++index;
 
@@ -146,7 +183,9 @@ class JSONScanner {
     }
 
     public JSONArray parseJSONArray() {
-        if (!hasNext() || json.charAt(index) != '[') {
+        testHasNext();
+
+        if (getNextToken() != '[') {
             throw new JSONException(String.format("Invalid start char %c at pos %d for json array",
                     json.charAt(index), index));
         }
@@ -155,25 +194,27 @@ class JSONScanner {
 
         List<Object> values = new ArrayList<>();
 
-        while (hasNext()) {
-            skipSpaces();
+        Character ch = null;
 
-            if (json.charAt(index) == ']') {
+        while (hasNext()) {
+            if (getNextToken() == ']') {
                 ++index;
                 break;
             }
 
             values.add(parse());
 
-            skipSpaces();
+            testHasNext();
 
-            if (json.charAt(index) == ',') {
+            ch = getNextToken();
+
+            if (ch == ',') {
                 ++index;
-            } else if (json.charAt(index) == ']') {
+            } else if (ch == ']') {
                 ++index;
                 break;
             } else {
-                throw new JSONException("Invalid char for json array: " + json.charAt(index));
+                throw new JSONException("Invalid char for json array: " + ch);
             }
         }
 
@@ -183,7 +224,11 @@ class JSONScanner {
     }
 
     public JSONObject parseJSONObject() {
-        if (!hasNext() || json.charAt(index) != '{') {
+        Character ch = null;
+
+        testHasNext();
+
+        if (getNextToken() != '{') {
             throw new JSONException(String.format("Invalid start char %c at pos %d for json object",
                     json.charAt(index), index));
         }
@@ -193,9 +238,7 @@ class JSONScanner {
         JSONObject jsonObject = new JSONObject();
 
         while (hasNext()) {
-            skipSpaces();
-
-            if (json.charAt(index) == '}') {
+            if (getNextToken() == '}') {
                 ++index;
 
                 return jsonObject;
@@ -203,9 +246,9 @@ class JSONScanner {
 
             JSONString key = parseJSONString();
 
-            skipSpaces();
+            testHasNext();
 
-            if (index == json.length() || json.charAt(index) != ':') {
+            if (getNextToken() != ':') {
                 throw new JSONException(String.format("Invalid char %s at pos %d for key and value sep for json object",
                         json.charAt(index), index));
             }
@@ -216,15 +259,13 @@ class JSONScanner {
 
             jsonObject.put(new JSONString(key.getValue()), value);
 
-            skipSpaces();
+            testHasNext("Missing end } for json object");
 
-            if (index == json.length()) {
-                throw new JSONException("Missing end } for json object");
-            }
+            ch = getNextToken();
 
-            if (json.charAt(index) == ',') {
+            if (ch == ',') {
                 ++index;
-            } else if (json.charAt(index) == '}') {
+            } else if (ch == '}') {
                 ++index;
 
                 return jsonObject;
@@ -237,12 +278,18 @@ class JSONScanner {
     }
 
     public JSONBoolean parseJSONBoolean() {
-        if (!hasNext() || (json.charAt(index) != 't' && json.charAt(index) != 'f')) {
+        testHasNext();
+
+        Character ch = getNextToken();
+
+        if (ch != 't' && ch != 'f') {
             throw new JSONException(String.format("Invalid char %c at pos %d for json boolean",
                     json.charAt(index), index));
         }
 
-        char ch = json.charAt(index);
+        testHasNext();
+
+        ch = getNextToken();
 
         //true
         if (ch == 't') {
@@ -253,7 +300,7 @@ class JSONScanner {
                 ++index;
             }
 
-            if (!"true".equals(builder.toString())) {
+            if (!JSONBoolean.TRUE_STRING_VALUE.equals(builder.toString())) {
                 throw new JSONException(String.format("Invalid true value: %s", builder.toString()));
             }
 
@@ -267,7 +314,7 @@ class JSONScanner {
             ++index;
         }
 
-        if (!"false".equals(builder.toString())) {
+        if (!JSONBoolean.FALSE_STRING_VALUE.equals(builder.toString())) {
             throw new JSONException(String.format("Invalid false value: %s", builder.toString()));
         }
 
@@ -275,7 +322,9 @@ class JSONScanner {
     }
 
     public JSONNull parseJSONNull() {
-        if (!hasNext() || (json.charAt(index) != 'n')) {
+        testHasNext();
+
+        if (getNextToken() != 'n') {
             throw new JSONException(String.format("Invalid char %c at pos %d for json null",
                     json.charAt(index), index));
         }
@@ -287,7 +336,7 @@ class JSONScanner {
             ++index;
         }
 
-        if (!"null".equals(builder.toString())) {
+        if (!JSONNull.NULL_STRING_VALUE.equals(builder.toString())) {
             throw new JSONException(String.format("Invalid null value:%s", builder.toString()));
         }
 
@@ -297,9 +346,7 @@ class JSONScanner {
     public JSONNumber parseJSONNumber() {
         StringBuilder builder = new StringBuilder();
 
-        if (index == json.length()) {
-            throw new JSONException("Empty input for json number");
-        }
+        testHasNext("Empty input for json number");
 
         while (index < json.length()) {
             char ch = json.charAt(index);

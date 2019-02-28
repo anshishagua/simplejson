@@ -1,7 +1,7 @@
 package com.anshishagua.simplejson;
 
 public class JSONConstants {
-    public static final char BLACK_SLASH = '\\';
+    public static final char ESCAPCE_CHAR = '\\';
     public static final char DOUBLE_QUOTE = '"';
     public static final char TAB = '\t';
     public static final char LEFT_BRACKET = '[';
