@@ -64,28 +64,6 @@ class JSONScanner {
         }
     }
 
-    private boolean isUnicode(String string) {
-        for (int i = 0; i < 4; ++i) {
-            char ch = string.charAt(i);
-
-            if (ch >= '0' && ch <= '9') {
-                continue;
-            }
-
-            if (ch >= 'a' && ch <= 'f') {
-                continue;
-            }
-
-            if (ch >= 'A' && ch <= 'F') {
-                continue;
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-
     public JSONValue parse() {
         testHasNext();
 
@@ -126,7 +104,7 @@ class JSONScanner {
 
         testHasNext();
 
-        if (getNextToken() != '"') {
+        if (getNextToken() != JSONConstants.DOUBLE_QUOTE) {
             throw new JSONException(String.format("Invalid start char %c at pos %d for json string",
                     json.charAt(index), index));
         }
@@ -135,19 +113,18 @@ class JSONScanner {
 
         StringBuilder builder = new StringBuilder();
 
-        while (hasNext()) {
-            ch = getNextToken();
+        while (index < json.length()) {
+            ch = json.charAt(index);
 
             switch (ch) {
-                case JSONConstants.ESCAPCE_CHAR:
+                case JSONConstants.ESCAPE_CHAR:
                     ++index;
 
                     testHasNext();
 
                     char escapeChar = getNextToken();
 
-                    if (escapeChar == '"' || escapeChar == '\b' || escapeChar == '\f' || escapeChar == '\t' ||
-                            escapeChar == '\r' || escapeChar == '\n' || escapeChar == '\\') {
+                    if (StringUtils.isValidEscapeChar(escapeChar)) {
                         builder.append(escapeChar);
                         ++index;
                         break;
@@ -160,7 +137,7 @@ class JSONScanner {
 
                         String unicode = json.substring(index, index + 4);
 
-                        if (!isUnicode(unicode)) {
+                        if (!StringUtils.isJSONUnicode(unicode)) {
                             throw new JSONException("Not valid unicode:" + unicode);
                         }
 
@@ -168,9 +145,9 @@ class JSONScanner {
                         index += 4;
                         break;
                     } else {
-                        throw new JSONException("Invalid escape char " + ch);
+                        throw new JSONException("Invalid escape char " + escapeChar + " at pos: " + index);
                     }
-                case '"':
+                case JSONConstants.DOUBLE_QUOTE:
                     ++index;
                     return new JSONString(builder.toString());
                 default:
@@ -185,7 +162,7 @@ class JSONScanner {
     public JSONArray parseJSONArray() {
         testHasNext();
 
-        if (getNextToken() != '[') {
+        if (getNextToken() != JSONConstants.LEFT_BRACKET) {
             throw new JSONException(String.format("Invalid start char %c at pos %d for json array",
                     json.charAt(index), index));
         }
@@ -197,7 +174,7 @@ class JSONScanner {
         Character ch = null;
 
         while (hasNext()) {
-            if (getNextToken() == ']') {
+            if (getNextToken() == JSONConstants.RIGHT_BRACKET) {
                 ++index;
                 break;
             }
@@ -208,9 +185,9 @@ class JSONScanner {
 
             ch = getNextToken();
 
-            if (ch == ',') {
+            if (ch == JSONConstants.COMMA) {
                 ++index;
-            } else if (ch == ']') {
+            } else if (ch == JSONConstants.RIGHT_BRACKET) {
                 ++index;
                 break;
             } else {
@@ -228,7 +205,7 @@ class JSONScanner {
 
         testHasNext();
 
-        if (getNextToken() != '{') {
+        if (getNextToken() != JSONConstants.LEFT_CURLY_BRACKET) {
             throw new JSONException(String.format("Invalid start char %c at pos %d for json object",
                     json.charAt(index), index));
         }
@@ -238,7 +215,7 @@ class JSONScanner {
         JSONObject jsonObject = new JSONObject();
 
         while (hasNext()) {
-            if (getNextToken() == '}') {
+            if (getNextToken() == JSONConstants.RIGHT_CURLY_BRACKET) {
                 ++index;
 
                 return jsonObject;
@@ -248,7 +225,7 @@ class JSONScanner {
 
             testHasNext();
 
-            if (getNextToken() != ':') {
+            if (getNextToken() != JSONConstants.KEY_VALUE_SEPARATOR) {
                 throw new JSONException(String.format("Invalid char %s at pos %d for key and value sep for json object",
                         json.charAt(index), index));
             }
@@ -263,9 +240,9 @@ class JSONScanner {
 
             ch = getNextToken();
 
-            if (ch == ',') {
+            if (ch == JSONConstants.COMMA) {
                 ++index;
-            } else if (ch == '}') {
+            } else if (ch == JSONConstants.RIGHT_CURLY_BRACKET) {
                 ++index;
 
                 return jsonObject;

@@ -577,6 +577,10 @@ public class JSON {
         return jsonValue.format(new FormatConfig(true, 0));
     }
 
+    public static String format(JSONValue jsonValue) {
+        return jsonValue.format(new FormatConfig(true, 0));
+    }
+
     public static String compress(String json) {
         Objects.requireNonNull(json);
 
