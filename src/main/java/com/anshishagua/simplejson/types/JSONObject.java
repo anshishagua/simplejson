@@ -6,13 +6,14 @@ import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class JSONObject implements JSONValue {
     private Map<JSONString, JSONValue> map;
 
     public JSONObject() {
-        map = new HashMap<>();
+        map = new LinkedHashMap<>();
     }
 
     public JSONObject(Map<JSONString, JSONValue> map) {
