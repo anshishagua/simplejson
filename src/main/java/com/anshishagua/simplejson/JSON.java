@@ -560,7 +560,7 @@ public class JSON {
 
         JSONValue jsonValue = parse(json);
 
-        return jsonValue.format(0);
+        return jsonValue.format(new FormatConfig(true, 0));
     }
 
     public static boolean validate(String json) {

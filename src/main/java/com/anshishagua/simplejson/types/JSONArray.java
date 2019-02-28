@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.FormatConfig;
+import com.anshishagua.simplejson.JSONConstants;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -32,27 +34,37 @@ public class JSONArray implements JSONValue {
     }
 
     public String format() {
-        return format(0);
+        return format(new FormatConfig(true, 0));
     }
 
     @Override
-    public String format(int indent) {
-        StringBuilder builder = new StringBuilder("[\n");
+    public String format(FormatConfig formatConfig) {
+        StringBuilder builder = new StringBuilder();
+
+        if (formatConfig.shouldIndent() && formatConfig.shouldIndentStartToken()) {
+            builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
+        }
+
+        builder.append(JSONConstants.LEFT_BRACKET);
+        builder.append(JSONConstants.NEW_LINE);
 
         Iterator<JSONValue> iterator = values.iterator();
 
         while (iterator.hasNext()) {
-            builder.append(iterator.next().format(indent + 1));
+            builder.append(iterator.next().format(new FormatConfig(formatConfig.shouldIndent(), formatConfig.getIndent() + 1, formatConfig.getIndentString())));
 
             if (iterator.hasNext()) {
-                builder.append(",");
+                builder.append(JSONConstants.COMMA);
             }
 
-            builder.append("\n");
+            builder.append(JSONConstants.NEW_LINE);
         }
 
-        builder.append(StringUtils.repeat('\t', indent));
-        builder.append("]");
+        if (formatConfig.shouldIndent()) {
+            builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
+        }
+
+        builder.append(JSONConstants.RIGHT_BRACKET);
 
         return builder.toString();
     }

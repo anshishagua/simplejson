@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.FormatConfig;
+import com.anshishagua.simplejson.JSONConstants;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.util.HashMap;
@@ -27,31 +29,43 @@ public class JSONObject implements JSONValue {
     }
 
     @Override
-    public String format(int indent) {
-        StringBuilder builder = new StringBuilder("{\n");
+    public String format(FormatConfig formatConfig) {
+        StringBuilder builder = new StringBuilder();
+
+        if (formatConfig.shouldIndent() && formatConfig.shouldIndentStartToken()) {
+            builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
+        }
+
+        builder.append(JSONConstants.LEFT_CURLY_BRACKET);
+        builder.append(JSONConstants.NEW_LINE);
 
         Iterator<Map.Entry<JSONString, JSONValue>> iterator = map.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Map.Entry<JSONString, JSONValue> entry = iterator.next();
 
-            builder.append(entry.getKey().format(indent + 1) + ": ");
+            builder.append(entry.getKey().format(new FormatConfig(formatConfig.shouldIndent(), formatConfig.getIndent() + 1, formatConfig.getIndentString())));
+
+            builder.append(": ");
 
             if (entry.getValue().isObject()) {
-                builder.append(entry.getValue().format(indent + 1));
+                builder.append(entry.getValue().format(new FormatConfig(formatConfig.shouldIndent(), formatConfig.getIndent() + 1, formatConfig.getIndentString(), false)));
             } else {
-                builder.append(entry.getValue().format(0));
+                builder.append(entry.getValue().format(new FormatConfig(false, 0)));
             }
 
             if (iterator.hasNext()) {
-                builder.append(",");
+                builder.append(JSONConstants.COMMA);
             }
 
-            builder.append("\n");
+            builder.append(JSONConstants.NEW_LINE);
         }
 
-        builder.append(StringUtils.repeat('\t', indent));
-        builder.append("}");
+        if (formatConfig.shouldIndent()) {
+            builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
+        }
+
+        builder.append(JSONConstants.RIGHT_CURLY_BRACKET);
 
         return builder.toString();
     }

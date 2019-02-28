@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.FormatConfig;
+
 /**
  * JSONValue.java
  *
@@ -8,7 +10,7 @@ package com.anshishagua.simplejson.types;
  */
 
 public interface JSONValue {
-    String format(int indent);
+    String format(FormatConfig formatConfig);
     boolean isObject();
     Object toObject();
 }

@@ -1,5 +1,6 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.FormatConfig;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.math.BigDecimal;
@@ -66,9 +67,12 @@ public class JSONNumber implements JSONValue {
     }
 
     @Override
-    public String format(int indent) {
+    public String format(FormatConfig formatConfig) {
         StringBuilder builder = new StringBuilder();
-        builder.append(StringUtils.repeat('\t', indent));
+
+        if (formatConfig.shouldIndent()) {
+            builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
+        }
 
         builder.append(value);
 

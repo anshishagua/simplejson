@@ -3,6 +3,16 @@ package com.anshishagua.simplejson.utils;
 import java.util.Objects;
 
 public class StringUtils {
+    public static String repeat(String string, int count) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < count; ++i) {
+            builder.append(string);
+        }
+
+        return builder.toString();
+    }
+
     public static String repeat(char ch, int count) {
         StringBuilder builder = new StringBuilder();
 

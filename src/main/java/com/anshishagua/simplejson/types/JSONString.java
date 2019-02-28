@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.FormatConfig;
+import com.anshishagua.simplejson.JSONConstants;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.util.Objects;
@@ -34,19 +36,21 @@ public class JSONString implements JSONValue {
     }
 
     @Override
-    public String format(int indent) {
+    public String format(FormatConfig formatConfig) {
         StringBuilder builder = new StringBuilder();
-        builder.append(StringUtils.repeat('\t', indent));
-        builder.append("\"");
-        builder.append(value);
-        builder.append("\"");
+
+        if (formatConfig.shouldIndent()) {
+            builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
+        }
+
+        builder.append(StringUtils.doubleQuote(value));
 
         return builder.toString();
     }
 
     @Override
     public String toString() {
-        return "\"" + value + "\"";
+        return StringUtils.doubleQuote(value);
     }
 
     @Override

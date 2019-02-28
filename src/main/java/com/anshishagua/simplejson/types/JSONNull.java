@@ -1,8 +1,11 @@
 package com.anshishagua.simplejson.types;
 
+import com.anshishagua.simplejson.FormatConfig;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 public class JSONNull implements JSONValue {
+    public static final String NULL_STRING_VALUE = "null";
+
     public static final JSONNull NULL = new JSONNull();
 
     private JSONNull() {
@@ -10,18 +13,21 @@ public class JSONNull implements JSONValue {
     }
 
     @Override
-    public String format(int indent) {
+    public String format(FormatConfig formatConfig) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(StringUtils.repeat('\t', indent));
-        builder.append("null");
+        if (formatConfig.shouldIndent()) {
+            builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
+        }
+
+        builder.append(NULL_STRING_VALUE);
 
         return builder.toString();
     }
 
     @Override
     public String toString() {
-        return "null";
+        return NULL_STRING_VALUE;
     }
 
     @Override
