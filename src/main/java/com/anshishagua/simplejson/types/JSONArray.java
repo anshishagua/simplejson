@@ -103,4 +103,9 @@ public class JSONArray implements JSONValue {
 
         return list;
     }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.ARRAY;
+    }
 }

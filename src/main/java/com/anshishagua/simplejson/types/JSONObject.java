@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class JSONObject implements JSONValue {
     private Map<JSONString, JSONValue> map;
@@ -27,6 +28,10 @@ public class JSONObject implements JSONValue {
 
     public JSONValue get(JSONString key) {
         return map.get(key);
+    }
+
+    public Set<JSONString> keySet() {
+        return map.keySet();
     }
 
     @Override
@@ -90,5 +95,10 @@ public class JSONObject implements JSONValue {
         }
 
         return result;
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.OBJECT;
     }
 }

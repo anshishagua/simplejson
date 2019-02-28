@@ -48,4 +48,9 @@ public class JSONBoolean implements JSONValue {
     public Object toObject() {
         return value;
     }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.BOOLEAN;
+    }
 }

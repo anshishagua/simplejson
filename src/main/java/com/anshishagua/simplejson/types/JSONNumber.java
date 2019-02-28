@@ -93,4 +93,9 @@ public class JSONNumber implements JSONValue {
     public Object toObject() {
         return value;
     }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.NUMBER;
+    }
 }

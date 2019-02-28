@@ -13,4 +13,5 @@ public interface JSONValue {
     String format(FormatConfig formatConfig);
     boolean isObject();
     Object toObject();
+    ValueType getValueType();
 }

@@ -39,4 +39,9 @@ public class JSONNull implements JSONValue {
     public Object toObject() {
         return null;
     }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.NULL;
+    }
 }

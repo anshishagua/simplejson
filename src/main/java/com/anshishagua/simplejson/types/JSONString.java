@@ -62,4 +62,9 @@ public class JSONString implements JSONValue {
     public Object toObject() {
         return value;
     }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.STRING;
+    }
 }

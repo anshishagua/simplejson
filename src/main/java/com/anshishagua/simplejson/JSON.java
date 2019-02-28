@@ -563,6 +563,65 @@ public class JSON {
         return jsonValue.format(new FormatConfig(true, 0));
     }
 
+    public static String compress(String json) {
+        Objects.requireNonNull(json);
+
+        JSONValue jsonValue = parse(json);
+
+        return compress(jsonValue);
+    }
+
+    private static String compress(JSONValue jsonValue) {
+        Objects.requireNonNull(jsonValue);
+
+        StringBuilder builder;
+
+        switch (jsonValue.getValueType()) {
+            case ARRAY:
+                JSONArray jsonArray = (JSONArray) jsonValue;
+
+                builder = new StringBuilder();
+                builder.append(JSONConstants.LEFT_BRACKET);
+
+                for (int i = 0; i < jsonArray.length(); ++i) {
+                    builder.append(compress(jsonArray.get(i)));
+
+                    if (i != jsonArray.length() - 1) {
+                        builder.append(",");
+                    }
+                }
+
+                builder.append(JSONConstants.RIGHT_BRACKET);
+
+                return builder.toString();
+            case OBJECT:
+                JSONObject jsonObject = (JSONObject) jsonValue;
+
+                builder = new StringBuilder();
+                builder.append(JSONConstants.LEFT_CURLY_BRACKET);
+
+                Iterator<JSONString> iterator = jsonObject.keySet().iterator();
+
+                while (iterator.hasNext()) {
+                    JSONString key = iterator.next();
+
+                    builder.append(key.toString());
+                    builder.append(":");
+                    builder.append(compress(jsonObject.get(key)));
+
+                    if (iterator.hasNext()) {
+                        builder.append(JSONConstants.COMMA);
+                    }
+                }
+
+                builder.append(JSONConstants.RIGHT_CURLY_BRACKET);
+
+                return builder.toString();
+            default:
+                return jsonValue.toString();
+        }
+    }
+
     public static boolean validate(String json) {
         try {
             JSON.parse(json);
