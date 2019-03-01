@@ -31,6 +31,11 @@ public class SerializerRegistry {
         SERIALIZER_MAP.put(Date.class, new DateSerializer());
         SERIALIZER_MAP.put(LocalDate.class, new LocalDateSerializer());
         SERIALIZER_MAP.put(LocalDateTime.class, new LocalDateTimeSerializer());
+
+        SERIALIZER_MAP.put(boolean[].class, new BooleanArraySerializer());
+        SERIALIZER_MAP.put(int[].class, new IntegerArraySerializer());
+        SERIALIZER_MAP.put(long[].class, new LongArraySerializer());
+        SERIALIZER_MAP.put(double[].class, new DoubleArraySerializer());
     }
 
     public static <T> JSONSerializer<T> get(Class<T> clazz) {

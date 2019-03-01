@@ -1,5 +1,6 @@
 package com.anshishagua.simplejson;
 
+import com.anshishagua.simplejson.types.JSONValue;
 import com.anshishagua.simplejson.utils.JSONUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,11 +14,11 @@ import java.util.IdentityHashMap;
 public class JSONTest {
     @Test
     public void testEmptyJSONArray() {
-        String json = "[]";
+        String json = "[{\n\"aa\":   11}]";
 
         Object value = JSON.parse(json);
 
-        Assert.assertEquals("[]", value.toString());
+        //Assert.assertEquals("[]", value.toString());
     }
 
     @Test
@@ -80,10 +81,6 @@ public class JSONTest {
 
         System.out.println(Arrays.toString(sss));
 
-        System.out.println(JSON.toJSONString(Role.ADMIN));
-
-        System.out.println(JSON.parse("\"ADMIN\"", Role.class));
-
         System.out.println(JSON.parse("\"2018-01-01 11:11:11\"", LocalDateTime.class));
     }
 
@@ -93,7 +90,7 @@ public class JSONTest {
 
         System.out.println(JSON.parse(json, Person.class));
 
-        System.out.println(JSON.parseObject(JSONUtils.loadResource("test.json")));
+        System.out.println(JSON.format(JSONUtils.loadResource("test.json")));
 
         Person person = new Person();
         person.setId(1);
@@ -106,10 +103,40 @@ public class JSONTest {
         person.setAddresses(addresses);
 
         person.setBirthday(LocalDate.now());
-        person.setParents(Arrays.asList(person));
+        person.setRole(Person.Role.USER);
+        //person.setParents(Arrays.asList(person));
 
+        json = JSON.toJSONString(person);
+
+        JSONValue jsonValue = JSON.parse(json);
         System.out.println(JSON.toJSONString(person));
 
         IdentityHashMap<Object, Object> map;
+
+        System.out.println(JSON.format("[{}, {}]"));
+    }
+
+    @Test
+    public void testCompress() throws Exception {
+        int [] a = {1, 2, 3};
+
+        Object b = a;
+
+        System.out.println(b);
+
+        int [] c = (int[]) b;
+
+        System.out.println(c[0]);
+
+        System.out.println((char) 9);
+        System.out.println(Integer.parseInt("+1"));
+        Character ch = '1';
+        System.out.println(ch == '1');
+        System.out.println(Character.isSpaceChar('\n'));
+        String json = JSONUtils.loadResource("taobao.json");
+        //json = JSON.format(json);
+        //System.out.println(json);
+        System.out.println(JSON.format(json));
+        //System.out.println(JSON.compress(json));
     }
 }

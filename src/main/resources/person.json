@@ -1,6 +1,7 @@
 {
   "id": 1,
   "name": "benben",
+  "role": "USER",
   "persons": [
     {
       "id": 2,

@@ -1,6 +1,7 @@
 package com.anshishagua.simplejson;
 
 import com.anshishagua.simplejson.annotation.JSONField;
+import com.anshishagua.simplejson.serialization.SerializerRegistry;
 import com.anshishagua.simplejson.types.JSONArray;
 import com.anshishagua.simplejson.types.JSONBoolean;
 import com.anshishagua.simplejson.types.JSONNull;
@@ -8,6 +9,7 @@ import com.anshishagua.simplejson.types.JSONNumber;
 import com.anshishagua.simplejson.types.JSONObject;
 import com.anshishagua.simplejson.types.JSONString;
 import com.anshishagua.simplejson.types.JSONValue;
+import com.anshishagua.simplejson.types.ValueType;
 import com.anshishagua.simplejson.utils.ReflectionUtils;
 import com.anshishagua.simplejson.utils.StringUtils;
 import com.anshishagua.simplejson.utils.TypeUtils;
@@ -94,7 +96,7 @@ public class JSON {
     }
 
     private static <T> T parse(JSONValue jsonValue, Class<T> clazz) {
-        if (jsonValue instanceof JSONNull) {
+        if (jsonValue.getValueType() == ValueType.NULL) {
             return null;
         }
 
@@ -105,36 +107,25 @@ public class JSON {
         if (clazz == LocalDate.class) {
             JSONString jsonString = (JSONString) jsonValue;
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-            return (T) LocalDate.parse(jsonString.getValue(), formatter);
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
         }
 
         if (clazz == LocalDateTime.class) {
             JSONString jsonString = (JSONString) jsonValue;
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-            return (T) LocalDateTime.parse(jsonString.getValue(), formatter);
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
         }
 
         if (clazz == LocalTime.class) {
             JSONString jsonString = (JSONString) jsonValue;
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-            return (T) LocalTime.parse(jsonString.getValue(), formatter);
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
         }
 
         if (clazz == Date.class) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             JSONString jsonString = (JSONString) jsonValue;
 
-            LocalDateTime localDateTime = LocalDateTime.parse(jsonString.getValue(), formatter);
-
-            Date date = new Date(localDateTime.toInstant(ZoneOffset.of(ZoneId.systemDefault().toString())).toEpochMilli());
-
-            return (T) date;
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
         }
 
         if (clazz.isEnum()) {
