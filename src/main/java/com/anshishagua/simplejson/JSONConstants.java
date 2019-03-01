@@ -15,4 +15,6 @@ public class JSONConstants {
     public static final char LEFT_CURLY_BRACKET = '{';
     public static final char RIGHT_CURLY_BRACKET = '}';
     public static final char KEY_VALUE_SEPARATOR = ':';
+    public static final char POSITIVE_SIGN = '+';
+    public static final char NEGATIVE_SIGN = '-';
 }

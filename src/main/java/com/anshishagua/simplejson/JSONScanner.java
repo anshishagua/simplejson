@@ -89,7 +89,7 @@ class JSONScanner {
                 jsonValue = parseJSONNull();
                 break;
             default:
-                if (Character.isDigit(ch) || ch == '-') {
+                if (Character.isDigit(ch) || ch == JSONConstants.POSITIVE_SIGN || ch == JSONConstants.NEGATIVE_SIGN) {
                     jsonValue = parseJSONNumber();
                 } else {
                     throw new JSONException(String.format("Not valid char %c at pos:%d", ch, index));
