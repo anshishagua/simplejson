@@ -20,8 +20,6 @@ import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -431,6 +429,18 @@ public class JSON {
                 for (double value : (double []) object) {
                     list.add(value);
                 }
+            }
+
+            return toJSONString(list, map);
+        }
+
+        if (clazz.isArray()) {
+            List<Object> list = new ArrayList<>();
+
+            Object [] array = (Object[]) object;
+
+            for (Object obj : array) {
+                list.add(obj);
             }
 
             return toJSONString(list, map);
