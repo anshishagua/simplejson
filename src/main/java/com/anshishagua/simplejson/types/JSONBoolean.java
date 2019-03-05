@@ -12,6 +12,11 @@ public class JSONBoolean implements JSONValue {
 
     private boolean value;
 
+    private JSONBoolean() {
+
+    }
+
+
     private JSONBoolean(boolean value) {
         this.value = value;
     }

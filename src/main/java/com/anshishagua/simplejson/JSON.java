@@ -453,7 +453,7 @@ public class JSON {
                 method = clazz.getMethod("name", null);
                 method.setAccessible(true);
 
-                return StringUtils.doubleQuote((String) method.invoke(object));
+                return StringUtils.doubleQuote(method.invoke(object));
             } catch (Exception ex) {
                 throw new JSONException(ex);
             }
