@@ -9,7 +9,7 @@ public class DoubleSerializer implements JSONSerializer<Double> {
         return value.toString();
     }
 
-    public Double deserialize(String json) {
+    public Double deserialize(String json, Class<Double> clazz) {
         return Double.parseDouble(json);
     }
 }

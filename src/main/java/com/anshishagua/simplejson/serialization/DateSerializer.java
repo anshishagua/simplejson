@@ -1,6 +1,7 @@
 package com.anshishagua.simplejson.serialization;
 
 import com.anshishagua.simplejson.JSONException;
+import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,12 +15,16 @@ public class DateSerializer implements JSONSerializer<Date> {
     public String serialize(Date value) {
         Objects.requireNonNull(value);
 
-        return FORMAT.format(value);
+        return StringUtils.doubleQuote(FORMAT.format(value));
     }
 
     @Override
-    public Date deserialize(String json) {
+    public Date deserialize(String json, Class<Date> clazz) {
         try {
+            if (json.startsWith("\"")) {
+                json = json.substring(1, json.length() - 1);
+            }
+
             return FORMAT.parse(json);
         } catch (ParseException ex) {
             throw new JSONException(ex);

@@ -26,7 +26,7 @@ public class LongArraySerializer implements JSONSerializer<long[]> {
     }
 
     @Override
-    public long[] deserialize(String json) {
+    public long[] deserialize(String json, Class<long[]> clazz) {
         json = json.substring(1, json.length() - 1);
 
         if (!json.contains(",")) {
@@ -42,11 +42,5 @@ public class LongArraySerializer implements JSONSerializer<long[]> {
         }
 
         return array;
-    }
-
-    public static void main(String [] args) {
-        LongArraySerializer serializer = new LongArraySerializer();
-
-        System.out.println(Arrays.toString(serializer.deserialize("[1,3,5]")));
     }
 }

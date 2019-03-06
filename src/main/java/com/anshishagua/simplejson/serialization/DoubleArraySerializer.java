@@ -26,7 +26,7 @@ public class DoubleArraySerializer implements JSONSerializer<double[]> {
     }
 
     @Override
-    public double[] deserialize(String json) {
+    public double[] deserialize(String json, Class<double[]> clazz) {
         json = json.substring(1, json.length() - 1);
 
         if (!json.contains(",")) {
@@ -42,11 +42,5 @@ public class DoubleArraySerializer implements JSONSerializer<double[]> {
         }
 
         return array;
-    }
-
-    public static void main(String [] args) {
-        BooleanArraySerializer serializer = new BooleanArraySerializer();
-
-        System.out.println(Arrays.toString(serializer.deserialize("[true,false,true]")));
     }
 }

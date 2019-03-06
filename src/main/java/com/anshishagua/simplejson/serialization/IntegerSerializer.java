@@ -5,7 +5,7 @@ public class IntegerSerializer implements JSONSerializer<Integer> {
         return object.toString();
     }
 
-    public Integer deserialize(String json) {
+    public Integer deserialize(String json, Class<Integer> clazz) {
         return Integer.parseInt(json);
     }
 }

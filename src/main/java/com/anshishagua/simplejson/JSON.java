@@ -1,7 +1,15 @@
 package com.anshishagua.simplejson;
 
 import com.anshishagua.simplejson.annotation.JSONField;
+import com.anshishagua.simplejson.serialization.BooleanArraySerializer;
+import com.anshishagua.simplejson.serialization.ByteArraySerializer;
+import com.anshishagua.simplejson.serialization.DoubleArraySerializer;
+import com.anshishagua.simplejson.serialization.FloatArraySerializer;
+import com.anshishagua.simplejson.serialization.IntegerArraySerializer;
+import com.anshishagua.simplejson.serialization.JSONSerializer;
+import com.anshishagua.simplejson.serialization.LongArraySerializer;
 import com.anshishagua.simplejson.serialization.SerializerRegistry;
+import com.anshishagua.simplejson.serialization.ShortArraySerializer;
 import com.anshishagua.simplejson.types.JSONArray;
 import com.anshishagua.simplejson.types.JSONBoolean;
 import com.anshishagua.simplejson.types.JSONNull;
@@ -105,25 +113,25 @@ public class JSON {
         if (clazz == LocalDate.class) {
             JSONString jsonString = (JSONString) jsonValue;
 
-            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz == LocalDateTime.class) {
             JSONString jsonString = (JSONString) jsonValue;
 
-            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz == LocalTime.class) {
             JSONString jsonString = (JSONString) jsonValue;
 
-            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz == Date.class) {
             JSONString jsonString = (JSONString) jsonValue;
 
-            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue());
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz.isEnum()) {
@@ -395,43 +403,23 @@ public class JSON {
         }
 
         if (TypeUtils.isPrimitiveArray(clazz)) {
-            List<Object> list = new ArrayList<>();
-
             if (clazz == boolean[].class) {
-                for (boolean value : (boolean[]) object) {
-                    list.add(value);
-                }
+                return ((JSONSerializer<boolean[]>) SerializerRegistry.get(clazz)).serialize((boolean[]) object);
             } else if (clazz == byte[].class) {
-                for (byte value : (byte[]) object) {
-                    list.add(value);
-                }
+                return ((JSONSerializer<byte[]>) SerializerRegistry.get(clazz)).serialize((byte[]) object);
             } else if (clazz == char[].class) {
-                for (char value : (char[]) object) {
-                    list.add(String.valueOf(value));
-                }
+                return ((JSONSerializer<char[]>) SerializerRegistry.get(clazz)).serialize((char[]) object);
             } else if (clazz == short[].class) {
-                for (short value : (short[]) object) {
-                    list.add(value);
-                }
+                return ((JSONSerializer<short[]>) SerializerRegistry.get(clazz)).serialize((short[]) object);
             } else if (clazz == int[].class) {
-                for (int value : (int[]) object) {
-                    list.add(value);
-                }
+                return ((JSONSerializer<int[]>) SerializerRegistry.get(clazz)).serialize((int[]) object);
             } else if (clazz == long[].class) {
-                for (long value : (long[]) object) {
-                    list.add(value);
-                }
+                return ((JSONSerializer<long[]>) SerializerRegistry.get(clazz)).serialize((long[]) object);
             } else if (clazz == float[].class) {
-                for (float value : (float[]) object) {
-                    list.add(value);
-                }
+                return ((JSONSerializer<float[]>) SerializerRegistry.get(clazz)).serialize((float[]) object);
             } else {
-                for (double value : (double []) object) {
-                    list.add(value);
-                }
+                return ((JSONSerializer<double[]>) SerializerRegistry.get(clazz)).serialize((double[]) object);
             }
-
-            return toJSONString(list, map);
         }
 
         if (clazz.isArray()) {
@@ -447,22 +435,15 @@ public class JSON {
         }
 
         if (clazz.isEnum()) {
-            Method method = null;
-
-            try {
-                method = clazz.getMethod("name", null);
-                method.setAccessible(true);
-
-                return StringUtils.doubleQuote(method.invoke(object));
-            } catch (Exception ex) {
-                throw new JSONException(ex);
-            }
+            return SerializerRegistry.get(Enum.class).serialize((Enum) object);
         }
 
         if (clazz == LocalDate.class) {
-            LocalDate localDate = (LocalDate) object;
+            return SerializerRegistry.get(LocalDate.class).serialize((LocalDate) object);
+        }
 
-            return StringUtils.doubleQuote(localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        if (clazz == LocalDateTime.class) {
+            return SerializerRegistry.get(LocalDateTime.class).serialize((LocalDateTime) object);
         }
 
         if (object instanceof JSONValue) {
@@ -478,96 +459,20 @@ public class JSON {
         }
 
         if (object instanceof Map) {
-            StringBuilder builder = new StringBuilder("{");
-
-            Iterator<Map.Entry<?, ?>> iterator = ((Map) object).entrySet().iterator();
-
-            while (iterator.hasNext()) {
-                Map.Entry<?, ?> entry = iterator.next();
-
-                builder.append(toJSONString(entry.getKey(), map));
-                builder.append(": ");
-                builder.append(toJSONString(entry.getValue(), map));
-
-                if (iterator.hasNext()) {
-                    builder.append(", ");
-                }
-            }
-
-            builder.append("}");
-
-            return builder.toString();
+            return SerializerRegistry.get(Map.class).serialize((Map<?,?>) object);
         }
 
         if (object instanceof Collection) {
-            StringBuilder builder = new StringBuilder("[");
+            JSONSerializer jsonSerializer = SerializerRegistry.get(object.getClass());
 
-            Iterator<Object> iterator = ((Collection) object).iterator();
-
-            while (iterator.hasNext()) {
-                builder.append(toJSONString(iterator.next(), map));
-
-                if (iterator.hasNext()) {
-                    builder.append(", ");
-                }
-            }
-
-            builder.append("]");
-
-            return builder.toString();
+            return jsonSerializer.serialize(object);
         }
 
         if (!TypeUtils.isUserDefinedObject(clazz)) {
             throw new JSONException("Unsupported type:" + clazz.getName());
         }
 
-        map.put(object, new ArrayList<>());
-
-        Field [] fields = clazz.getDeclaredFields();
-
-        StringBuilder builder = new StringBuilder("{");
-
-        for (int i = 0; i < fields.length; ++i) {
-            Field field = fields[i];
-            field.setAccessible(true);
-            Object value = null;
-
-            try {
-                value = field.get(object);
-                map.get(object).add(value);
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new JSONException(ex);
-            }
-
-            String fieldName = field.getName();
-
-            if (field.isAnnotationPresent(JSONField.class)) {
-                JSONField jsonField = field.getAnnotation(JSONField.class);
-
-                fieldName = jsonField.name();
-
-                if (jsonField.ignore()) {
-                    continue;
-                }
-
-                if (jsonField.ignoreNull() && value == null) {
-                    continue;
-                }
-            }
-
-            builder.append("\"");
-            builder.append(fieldName);
-            builder.append("\": ");
-            builder.append(toJSONString(value, map));
-
-            if (i != fields.length - 1) {
-                builder.append(", ");
-            }
-        }
-
-        builder.append("}");
-
-        return builder.toString();
+        return SerializerRegistry.get(Object.class).serialize(object);
     }
 
     public static String format(String json) {

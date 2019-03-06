@@ -12,7 +12,7 @@ public class StringSerializer implements JSONSerializer<String> {
     }
 
     @Override
-    public String deserialize(String json) {
+    public String deserialize(String json, Class<String> clazz) {
         Objects.requireNonNull(json);
 
         return json.substring(1, json.length() - 1);

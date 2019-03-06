@@ -26,7 +26,7 @@ public class BooleanArraySerializer implements JSONSerializer<boolean[]> {
     }
 
     @Override
-    public boolean[] deserialize(String json) {
+    public boolean[] deserialize(String json, Class<boolean[]> clazz) {
         json = json.substring(1, json.length() - 1);
 
         if (!json.contains(",")) {
@@ -47,6 +47,6 @@ public class BooleanArraySerializer implements JSONSerializer<boolean[]> {
     public static void main(String [] args) {
         BooleanArraySerializer serializer = new BooleanArraySerializer();
 
-        System.out.println(Arrays.toString(serializer.deserialize("[true,false,true]")));
+        System.out.println(Arrays.toString(serializer.deserialize("[true,false,true]", boolean[].class)));
     }
 }

@@ -11,7 +11,7 @@ public class BooleanSerializer implements JSONSerializer<Boolean> {
     }
 
     @Override
-    public Boolean deserialize(String json) {
+    public Boolean deserialize(String json, Class<Boolean> clazz) {
         return Boolean.parseBoolean(json);
     }
 }

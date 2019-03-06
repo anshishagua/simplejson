@@ -3,9 +3,9 @@ package com.anshishagua.simplejson.serialization;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class IntegerArraySerializer implements JSONSerializer<int[]> {
+public class CharArraySerializer implements JSONSerializer<char[]> {
     @Override
-    public String serialize(int [] array) {
+    public String serialize(char [] array) {
         Objects.requireNonNull(array);
 
         StringBuilder builder = new StringBuilder();
@@ -26,19 +26,19 @@ public class IntegerArraySerializer implements JSONSerializer<int[]> {
     }
 
     @Override
-    public int[] deserialize(String json, Class<int[]> clazz) {
+    public char[] deserialize(String json, Class<char[]> clazz) {
         json = json.substring(1, json.length() - 1);
 
         if (!json.contains(",")) {
-            return new int[0];
+            return new char[0];
         }
 
         String [] strings = json.split(",");
 
-        int [] array = new int[strings.length];
+        char [] array = new char[strings.length];
 
         for (int i = 0; i < strings.length; ++i) {
-            array[i] = Integer.parseInt(strings[i].trim());
+            array[i] = strings[i].charAt(0);
         }
 
         return array;

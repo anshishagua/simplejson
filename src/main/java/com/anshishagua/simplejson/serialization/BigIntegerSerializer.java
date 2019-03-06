@@ -10,7 +10,7 @@ public class BigIntegerSerializer implements JSONSerializer<BigInteger> {
         return value.toString();
     }
 
-    public BigInteger deserialize(String json) {
+    public BigInteger deserialize(String json, Class<BigInteger> clazz) {
         return new BigInteger(json);
     }
 }

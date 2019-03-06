@@ -1,5 +1,7 @@
 package com.anshishagua.simplejson.serialization;
 
+import com.anshishagua.simplejson.utils.StringUtils;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -11,11 +13,15 @@ public class LocalDateTimeSerializer implements JSONSerializer<LocalDateTime> {
     public String serialize(LocalDateTime value) {
         Objects.requireNonNull(value);
 
-        return FORMATTER.format(value);
+        return StringUtils.doubleQuote(FORMATTER.format(value));
     }
 
     @Override
-    public LocalDateTime deserialize(String json) {
+    public LocalDateTime deserialize(String json, Class<LocalDateTime> clazz) {
+        if (json.startsWith("\"")) {
+            json = json.substring(1, json.length() - 1);
+        }
+
         return LocalDateTime.parse(json, FORMATTER);
     }
 }

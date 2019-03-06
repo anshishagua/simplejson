@@ -16,7 +16,6 @@ public class JSONBoolean implements JSONValue {
 
     }
 
-
     private JSONBoolean(boolean value) {
         this.value = value;
     }

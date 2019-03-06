@@ -12,7 +12,7 @@ public class BigDecimalSerializer implements JSONSerializer<BigDecimal> {
     }
 
     @Override
-    public BigDecimal deserialize(String json) {
+    public BigDecimal deserialize(String json, Class<BigDecimal> clazz) {
         return new BigDecimal(json);
     }
 }

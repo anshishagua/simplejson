@@ -9,7 +9,7 @@ public class LongSerializer implements JSONSerializer<Long> {
         return value.toString();
     }
 
-    public Long deserialize(String json) {
+    public Long deserialize(String json, Class<Long> clazz) {
         return Long.parseLong(json);
     }
 }
