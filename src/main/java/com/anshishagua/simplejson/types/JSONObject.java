@@ -22,8 +22,48 @@ public class JSONObject implements JSONValue {
         this.map.putAll(map);
     }
 
+    public void put(String key, String value) {
+        map.put(new JSONString(key), new JSONString(value));
+    }
+
+    public void put(String key, double value) {
+        map.put(new JSONString(key), new JSONNumber(value));
+    }
+
+    public void put(String key, boolean value) {
+        map.put(new JSONString(key), value ? JSONBoolean.TRUE : JSONBoolean.FALSE);
+    }
+
+    public void put(String key, JSONValue value) {
+        map.put(new JSONString(key), value);
+    }
+
     public void put(JSONString key, JSONValue value) {
         map.put(key, value);
+    }
+
+    public String getString(String key) {
+        JSONValue jsonValue = map.get(new JSONString(key));
+
+        return ((JSONString) jsonValue).getValue();
+    }
+
+    public int getInt(String key) {
+        JSONValue jsonValue = map.get(new JSONString(key));
+
+        return ((JSONNumber) jsonValue).getAsInteger();
+    }
+
+    public double getDouble(String key) {
+        JSONValue jsonValue = map.get(new JSONString(key));
+
+        return ((JSONNumber) jsonValue).getAsDouble();
+    }
+
+    public boolean getBoolean(String key) {
+        JSONValue jsonValue = map.get(new JSONString(key));
+
+        return ((JSONBoolean) jsonValue).getValue();
     }
 
     public JSONValue get(JSONString key) {
@@ -78,7 +118,29 @@ public class JSONObject implements JSONValue {
 
     @Override
     public String toString() {
-        return map.toString();
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(JSONConstants.LEFT_CURLY_BRACKET);
+
+        Iterator<Map.Entry<JSONString, JSONValue>> iterator = map.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<JSONString, JSONValue> entry = iterator.next();
+
+            builder.append(entry.getKey().toString());
+
+            builder.append(": ");
+
+            builder.append(entry.getValue().toString());
+
+            if (iterator.hasNext()) {
+                builder.append(JSONConstants.COMMA);
+            }
+        }
+
+        builder.append(JSONConstants.RIGHT_CURLY_BRACKET);
+
+        return builder.toString();
     }
 
     @Override

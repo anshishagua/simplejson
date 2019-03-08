@@ -135,16 +135,9 @@ public class JSON {
         }
 
         if (clazz.isEnum()) {
-            try {
-                Method method = clazz.getMethod("valueOf", String.class);
-                method.setAccessible(true);
+            JSONString jsonString = (JSONString) jsonValue;
 
-                JSONString jsonString = (JSONString) jsonValue;
-
-                return (T) method.invoke(null, jsonString.getValue());
-            } catch (Exception ex) {
-                throw new JSONException(ex);
-            }
+            return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (TypeUtils.isPrimitive(clazz)) {

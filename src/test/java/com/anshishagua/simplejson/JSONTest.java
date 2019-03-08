@@ -1,15 +1,22 @@
 package com.anshishagua.simplejson;
 
+import com.anshishagua.simplejson.types.JSONArray;
+import com.anshishagua.simplejson.types.JSONNumber;
 import com.anshishagua.simplejson.types.JSONValue;
 import com.anshishagua.simplejson.utils.JSONUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JSONTest {
     @Test
@@ -108,12 +115,14 @@ public class JSONTest {
 
         json = JSON.toJSONString(person);
 
+        /*
         JSONValue jsonValue = JSON.parse(json);
         System.out.println(JSON.toJSONString(person));
 
         IdentityHashMap<Object, Object> map;
 
         System.out.println(JSON.format("[{}, {}]"));
+        */
     }
 
     @Test
@@ -136,7 +145,68 @@ public class JSONTest {
         String json = JSONUtils.loadResource("taobao.json");
         //json = JSON.format(json);
         //System.out.println(json);
-        System.out.println(JSON.format(json));
+        List list = new ArrayList();
+        list.add(Arrays.asList(1, 3, 4));
+        Map<String, Object> map = new HashMap<>();
+        map.put("1", 1111);
+        map.put("2", Arrays.asList(3.5, 2.3));
+
+        list.add(map);
+
+        Person person = new Person();
+        person.setRole(Person.Role.ADMIN);
+        person.setBirthday(LocalDate.now());
+        person.setName("aa");
+
+        Address [] addresses = new Address[1];
+        Address address = new Address();
+        address.setStreet("aaa");
+        address.setCountry("China");
+        address.setCity("beijing");
+        addresses[0] = address;
+
+        person.setAddresses(addresses);
+
+        list.add(person);
+
+        json = JSON.toJSONString(list);
+        System.out.println(json);
+
+        JSONArray jsonArray = JSON.parseArray(json);
+
+        System.out.println(jsonArray.format());
         //System.out.println(JSON.compress(json));
+    }
+
+    @Test
+    public void testAAA() throws Exception {
+        JSONValue jsonValue = new JSONNumber(1);
+
+        System.out.println(JSON.toJSONString(1));
+
+        Field [] fields = Person.class.getDeclaredFields();
+
+        Field field = Person.class.getDeclaredField("id");
+
+        Person person = new Person();
+        person.setId(1111);
+
+        field.setAccessible(true);
+        System.out.println(field.getInt(person));
+
+        int [][] a = {{1, 3, 5}, {}, {3}};
+
+        String json = JSON.toJSONString(a);
+
+        System.out.println(json);
+
+        int[][] b = JSON.parse(json, int[][].class);
+
+        System.out.println(Arrays.toString(b));
+
+        System.out.println(State.class.getMethod("name"));
+
+        State s;
+        System.out.println(State.class.getSuperclass());
     }
 }

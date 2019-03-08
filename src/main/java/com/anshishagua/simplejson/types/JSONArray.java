@@ -25,6 +25,10 @@ public class JSONArray implements JSONValue {
         values.addAll(Arrays.asList(objects));
     }
 
+    public void put(JSONValue value) {
+        values.add(value);
+    }
+
     public void add(JSONValue value) {
         values.add(value);
     }

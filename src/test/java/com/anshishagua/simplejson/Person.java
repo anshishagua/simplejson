@@ -6,6 +6,11 @@ import java.util.Arrays;
 import java.util.List;
 
 class Person {
+    public enum Role {
+        ADMIN,
+        USER;
+    }
+
     private int id;
     private String name;
     private boolean success;
@@ -13,6 +18,7 @@ class Person {
     private Address[] addresses;
     private LocalDate birthday;
     private List<Person> parents;
+    private Role role = Role.ADMIN;
 
     public Person() {
 
@@ -71,6 +77,14 @@ class Person {
         this.parents = parents;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -81,6 +95,7 @@ class Person {
                 ", addresses=" + Arrays.toString(addresses) +
                 ", birthday=" + birthday +
                 ", parents=" + null +
+                ", role=" + role +
                 '}';
     }
 }

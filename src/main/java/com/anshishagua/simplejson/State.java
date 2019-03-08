@@ -1,0 +1,22 @@
+package com.anshishagua.simplejson;
+
+public enum State {
+    BEGIN,
+    STRING_BEGIN,
+    IN_STRING,
+    STRING_END,
+    OBJECT_BEGIN,
+    OBJECT_EXPECTING_KEY,
+    OBJECT_EXPECTING_VALUE,
+    OBJECT_END,
+    ARRAY_BEGIN,
+    ARRAY_EXPECTING_ITEM,
+    ARRAY_END,
+    NUMBER_BEGIN,
+    NUMBER_END,
+    BOOLEAN_BEGIN,
+    BOOLEN_END,
+    NULL_BEGIN,
+    NULL_END,
+    END;
+}

@@ -43,8 +43,12 @@ public class SerializerRegistry {
         SERIALIZER_MAP.put(LocalDateTime.class, new LocalDateTimeSerializer());
 
         SERIALIZER_MAP.put(boolean[].class, new BooleanArraySerializer());
+        SERIALIZER_MAP.put(byte[].class, new ByteArraySerializer());
+        SERIALIZER_MAP.put(char[].class, new CharArraySerializer());
+        SERIALIZER_MAP.put(short[].class, new ShortArraySerializer());
         SERIALIZER_MAP.put(int[].class, new IntegerArraySerializer());
         SERIALIZER_MAP.put(long[].class, new LongArraySerializer());
+        SERIALIZER_MAP.put(float[].class, new FloatArraySerializer());
         SERIALIZER_MAP.put(double[].class, new DoubleArraySerializer());
 
         SERIALIZER_MAP.put(Enum.class, new EnumSerializer());
@@ -67,6 +71,10 @@ public class SerializerRegistry {
 
         if (Collection.class.isAssignableFrom(clazz)) {
             return SERIALIZER_MAP.get(Collection.class);
+        }
+
+        if (Map.class.isAssignableFrom(clazz)) {
+            return SERIALIZER_MAP.get(Map.class);
         }
 
         return SERIALIZER_MAP.get(Object.class);
