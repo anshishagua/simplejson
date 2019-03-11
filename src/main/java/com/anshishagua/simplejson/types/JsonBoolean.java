@@ -3,13 +3,25 @@ package com.anshishagua.simplejson.types;
 import com.anshishagua.simplejson.FormatConfig;
 import com.anshishagua.simplejson.utils.StringUtils;
 
-public class JSONNull implements JSONValue {
-    public static final String NULL_STRING_VALUE = "null";
+public class JsonBoolean implements JsonValue {
+    public static final String TRUE_STRING_VALUE = "true";
+    public static final String FALSE_STRING_VALUE = "false";
 
-    public static final JSONNull NULL = new JSONNull();
+    public static final JsonBoolean TRUE = new JsonBoolean(true);
+    public static final JsonBoolean FALSE = new JsonBoolean(false);
 
-    private JSONNull() {
+    private boolean value;
 
+    private JsonBoolean() {
+
+    }
+
+    private JsonBoolean(boolean value) {
+        this.value = value;
+    }
+
+    public boolean getValue() {
+        return value;
     }
 
     @Override
@@ -20,14 +32,15 @@ public class JSONNull implements JSONValue {
             builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
         }
 
-        builder.append(NULL_STRING_VALUE);
+        builder.append(value);
 
         return builder.toString();
     }
 
+
     @Override
     public String toString() {
-        return NULL_STRING_VALUE;
+        return Boolean.toString(value);
     }
 
     @Override
@@ -37,11 +50,11 @@ public class JSONNull implements JSONValue {
 
     @Override
     public Object toObject() {
-        return null;
+        return value;
     }
 
     @Override
     public ValueType getValueType() {
-        return ValueType.NULL;
+        return ValueType.BOOLEAN;
     }
 }

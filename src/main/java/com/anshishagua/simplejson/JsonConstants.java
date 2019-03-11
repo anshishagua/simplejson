@@ -1,6 +1,6 @@
 package com.anshishagua.simplejson;
 
-public class JSONConstants {
+public class JsonConstants {
     public static final char BACK_CHAR = '\b';
     public static final char FORMAT_CHAR = '\f';
     public static final char RETURN_CHAR = '\r';

@@ -1,12 +1,11 @@
 package com.anshishagua.simplejson.serialization;
 
-import com.anshishagua.simplejson.JSON;
-import com.anshishagua.simplejson.JSONException;
+import com.anshishagua.simplejson.JsonException;
 import com.anshishagua.simplejson.annotation.JSONField;
 
 import java.lang.reflect.Field;
 
-public class ObjectSerializer implements JSONSerializer<Object> {
+public class ObjectSerializer implements JsonSerializer<Object> {
     public String serialize(Object object) {
         Class clazz = object.getClass();
 
@@ -22,7 +21,7 @@ public class ObjectSerializer implements JSONSerializer<Object> {
             try {
                 value = field.get(object);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new JSONException(ex);
+                throw new JsonException(ex);
             }
 
             String fieldName = field.getName();
@@ -48,7 +47,7 @@ public class ObjectSerializer implements JSONSerializer<Object> {
             if (value == null) {
                 builder.append("null");
             } else {
-                JSONSerializer jsonSerializer = SerializerRegistry.get(value.getClass());
+                JsonSerializer jsonSerializer = SerializerRegistry.get(value.getClass());
 
                 System.out.println(value.getClass());
                 builder.append(jsonSerializer.serialize(value));

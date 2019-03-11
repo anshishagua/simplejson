@@ -3,7 +3,7 @@ package com.anshishagua.simplejson.serialization;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MapSerializer implements JSONSerializer<Map<?, ?>> {
+public class MapSerializer implements JsonSerializer<Map<?, ?>> {
     public String serialize(Map<?, ?> object) {
         StringBuilder builder = new StringBuilder("{");
 
@@ -12,7 +12,7 @@ public class MapSerializer implements JSONSerializer<Map<?, ?>> {
         while (iterator.hasNext()) {
             Map.Entry<?, ?> entry = iterator.next();
 
-            JSONSerializer jsonSerializer = SerializerRegistry.get(entry.getKey().getClass());
+            JsonSerializer jsonSerializer = SerializerRegistry.get(entry.getKey().getClass());
 
             builder.append(jsonSerializer.serialize(entry.getKey()));
             builder.append(": ");

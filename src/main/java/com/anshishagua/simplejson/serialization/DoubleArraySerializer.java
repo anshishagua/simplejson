@@ -1,9 +1,8 @@
 package com.anshishagua.simplejson.serialization;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class DoubleArraySerializer implements JSONSerializer<double[]> {
+public class DoubleArraySerializer implements JsonSerializer<double[]> {
     @Override
     public String serialize(double [] array) {
         Objects.requireNonNull(array);

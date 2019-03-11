@@ -3,25 +3,35 @@ package com.anshishagua.simplejson.types;
 import com.anshishagua.simplejson.FormatConfig;
 import com.anshishagua.simplejson.utils.StringUtils;
 
-public class JSONBoolean implements JSONValue {
-    public static final String TRUE_STRING_VALUE = "true";
-    public static final String FALSE_STRING_VALUE = "false";
+import java.util.Objects;
 
-    public static final JSONBoolean TRUE = new JSONBoolean(true);
-    public static final JSONBoolean FALSE = new JSONBoolean(false);
+public class JsonString implements JsonValue {
+    private final String value;
 
-    private boolean value;
+    public JsonString(String value) {
+        Objects.requireNonNull(value);
 
-    private JSONBoolean() {
-
-    }
-
-    private JSONBoolean(boolean value) {
         this.value = value;
     }
 
-    public boolean getValue() {
+    public String getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof JsonString)) {
+            return false;
+        }
+
+        JsonString jsonString = (JsonString) obj;
+
+        return jsonString.value.equals(value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 
     @Override
@@ -32,15 +42,14 @@ public class JSONBoolean implements JSONValue {
             builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
         }
 
-        builder.append(value);
+        builder.append(StringUtils.doubleQuote(value));
 
         return builder.toString();
     }
 
-
     @Override
     public String toString() {
-        return Boolean.toString(value);
+        return StringUtils.doubleQuote(value);
     }
 
     @Override
@@ -55,6 +64,6 @@ public class JSONBoolean implements JSONValue {
 
     @Override
     public ValueType getValueType() {
-        return ValueType.BOOLEAN;
+        return ValueType.STRING;
     }
 }

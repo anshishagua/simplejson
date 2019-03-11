@@ -1,6 +1,6 @@
 package com.anshishagua.simplejson.utils;
 
-import com.anshishagua.simplejson.JSONConstants;
+import com.anshishagua.simplejson.JsonConstants;
 
 import java.util.Objects;
 
@@ -58,13 +58,13 @@ public class StringUtils {
     }
 
     public static boolean isValidEscapeChar(char ch) {
-        return  ch == JSONConstants.DOUBLE_QUOTE ||
-                ch == JSONConstants.BACK_CHAR ||
-                ch == JSONConstants.FORMAT_CHAR ||
-                ch == JSONConstants.TAB ||
-                ch == JSONConstants.RETURN_CHAR ||
-                ch == JSONConstants.NEW_LINE ||
-                ch == JSONConstants.ESCAPE_CHAR ||
-                ch == JSONConstants.LEFT_SLASH;
+        return  ch == JsonConstants.DOUBLE_QUOTE ||
+                ch == JsonConstants.BACK_CHAR ||
+                ch == JsonConstants.FORMAT_CHAR ||
+                ch == JsonConstants.TAB ||
+                ch == JsonConstants.RETURN_CHAR ||
+                ch == JsonConstants.NEW_LINE ||
+                ch == JsonConstants.ESCAPE_CHAR ||
+                ch == JsonConstants.LEFT_SLASH;
     }
 }

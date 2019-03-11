@@ -1,9 +1,8 @@
 package com.anshishagua.simplejson.serialization;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class FloatArraySerializer implements JSONSerializer<float[]> {
+public class FloatArraySerializer implements JsonSerializer<float[]> {
     @Override
     public String serialize(float [] array) {
         Objects.requireNonNull(array);

@@ -1,11 +1,11 @@
 package com.anshishagua.simplejson.serialization;
 
-import com.anshishagua.simplejson.JSONException;
+import com.anshishagua.simplejson.JsonException;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.lang.reflect.Method;
 
-public class EnumSerializer<T extends Enum> implements JSONSerializer<T> {
+public class EnumSerializer<T extends Enum> implements JsonSerializer<T> {
     public String serialize(T object) {
         try {
             Method method = object.getClass().getMethod("name");
@@ -14,7 +14,7 @@ public class EnumSerializer<T extends Enum> implements JSONSerializer<T> {
 
             return StringUtils.doubleQuote(method.invoke(object));
         } catch (Exception ex) {
-            throw new JSONException(ex);
+            throw new JsonException(ex);
         }
     }
 
@@ -30,7 +30,7 @@ public class EnumSerializer<T extends Enum> implements JSONSerializer<T> {
 
             return (T) method.invoke(null, json);
         } catch (Exception ex) {
-            throw new JSONException(ex);
+            throw new JsonException(ex);
         }
     }
 }

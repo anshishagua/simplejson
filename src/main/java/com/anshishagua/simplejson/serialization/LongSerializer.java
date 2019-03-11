@@ -2,7 +2,7 @@ package com.anshishagua.simplejson.serialization;
 
 import java.util.Objects;
 
-public class LongSerializer implements JSONSerializer<Long> {
+public class LongSerializer implements JsonSerializer<Long> {
     public String serialize(Long value) {
         Objects.requireNonNull(value);
 

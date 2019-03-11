@@ -1,9 +1,8 @@
 package com.anshishagua.simplejson.serialization;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class IntegerArraySerializer implements JSONSerializer<int[]> {
+public class IntegerArraySerializer implements JsonSerializer<int[]> {
     @Override
     public String serialize(int [] array) {
         Objects.requireNonNull(array);

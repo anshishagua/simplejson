@@ -1,6 +1,6 @@
 package com.anshishagua.simplejson.serialization;
 
-public class ByteSerializer implements JSONSerializer<Byte> {
+public class ByteSerializer implements JsonSerializer<Byte> {
     @Override
     public String serialize(Byte object) {
         return object.toString();

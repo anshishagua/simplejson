@@ -3,7 +3,7 @@ package com.anshishagua.simplejson.serialization;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class BooleanArraySerializer implements JSONSerializer<boolean[]> {
+public class BooleanArraySerializer implements JsonSerializer<boolean[]> {
     @Override
     public String serialize(boolean [] array) {
         Objects.requireNonNull(array);

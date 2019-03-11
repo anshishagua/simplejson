@@ -1,9 +1,8 @@
 package com.anshishagua.simplejson.serialization;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class ShortArraySerializer implements JSONSerializer<short[]> {
+public class ShortArraySerializer implements JsonSerializer<short[]> {
     @Override
     public String serialize(short [] array) {
         Objects.requireNonNull(array);

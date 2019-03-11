@@ -8,9 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class JSONUtils {
+public class JsonUtils {
     public static String loadResource(String fileName) throws IOException {
-        String file = JSONUtils.class.getClassLoader().getResource(fileName).getPath();
+        String file = JsonUtils.class.getClassLoader().getResource(fileName).getPath();
 
         return load(Paths.get(file));
     }
@@ -28,7 +28,7 @@ public class JSONUtils {
     }
 
     public static void main(String [] args) {
-        URL url = JSONUtils.class.getClassLoader().getResource("a.json");
+        URL url = JsonUtils.class.getClassLoader().getResource("a.json");
         System.out.println(url.getPath());
     }
 }

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class LocalDateTimeSerializer implements JSONSerializer<LocalDateTime> {
+public class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime> {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override

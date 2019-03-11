@@ -1,14 +1,14 @@
 package com.anshishagua.simplejson.serialization;
 
-import com.anshishagua.simplejson.types.JSONNull;
+import com.anshishagua.simplejson.types.JsonNull;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.util.Objects;
 
-public class StringSerializer implements JSONSerializer<String> {
+public class StringSerializer implements JsonSerializer<String> {
     @Override
     public String serialize(String value) {
-        return value == null ? StringUtils.doubleQuote(JSONNull.NULL_STRING_VALUE) : StringUtils.doubleQuote(value);
+        return value == null ? StringUtils.doubleQuote(JsonNull.NULL_STRING_VALUE) : StringUtils.doubleQuote(value);
     }
 
     @Override

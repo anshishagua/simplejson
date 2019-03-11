@@ -1,9 +1,8 @@
 package com.anshishagua.simplejson.serialization;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class LongArraySerializer implements JSONSerializer<long[]> {
+public class LongArraySerializer implements JsonSerializer<long[]> {
     @Override
     public String serialize(long [] array) {
         Objects.requireNonNull(array);

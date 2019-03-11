@@ -1,12 +1,12 @@
 package com.anshishagua.simplejson;
 
-import com.anshishagua.simplejson.types.JSONArray;
-import com.anshishagua.simplejson.types.JSONBoolean;
-import com.anshishagua.simplejson.types.JSONNull;
-import com.anshishagua.simplejson.types.JSONNumber;
-import com.anshishagua.simplejson.types.JSONObject;
-import com.anshishagua.simplejson.types.JSONString;
-import com.anshishagua.simplejson.types.JSONValue;
+import com.anshishagua.simplejson.types.JsonArray;
+import com.anshishagua.simplejson.types.JsonBoolean;
+import com.anshishagua.simplejson.types.JsonNull;
+import com.anshishagua.simplejson.types.JsonNumber;
+import com.anshishagua.simplejson.types.JsonObject;
+import com.anshishagua.simplejson.types.JsonString;
+import com.anshishagua.simplejson.types.JsonValue;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.io.FileInputStream;
@@ -50,11 +50,11 @@ public class JSONStreamReader {
                 size = reader.read(buffer, 0, bufferSize);
                 position = 0;
             } catch (IOException ex) {
-                throw new JSONException(ex);
+                throw new JsonException(ex);
             }
 
             if (size == -1) {
-                throw new JSONException("EOF read");
+                throw new JsonException("EOF read");
             }
         }
     }
@@ -71,7 +71,7 @@ public class JSONStreamReader {
         char ch = read();
 
         if (ch != expect) {
-            throw new JSONException("Not expect char: " + ch + ", expecting " + expect);
+            throw new JsonException("Not expect char: " + ch + ", expecting " + expect);
         }
     }
 
@@ -79,7 +79,7 @@ public class JSONStreamReader {
         char ch = readNonEmptyChar();
 
         if (ch != expect) {
-            throw new JSONException("Not expect char: " + ch + ", expecting " + expect);
+            throw new JsonException("Not expect char: " + ch + ", expecting " + expect);
         }
     }
 
@@ -98,19 +98,19 @@ public class JSONStreamReader {
         try {
             charset = Charset.forName(charsetName);
         } catch (Exception ex) {
-            throw new JSONException(ex);
+            throw new JsonException(ex);
         }
 
         this.reader = new InputStreamReader(inputStream, charset);
         this.buffer = new char[bufferSize];
     }
 
-    public JSONArray parseArray(char first) {
+    public JsonArray parseArray(char first) {
         if (first != '[') {
-            throw new JSONException("JSON array not start with [");
+            throw new JsonException("Json array not start with [");
         }
 
-        JSONArray jsonArray = new JSONArray();
+        JsonArray jsonArray = new JsonArray();
 
         char ch = ' ';
 
@@ -129,12 +129,12 @@ public class JSONStreamReader {
         return jsonArray;
     }
 
-    public JSONObject parseObject(char first) {
+    public JsonObject parseObject(char first) {
         if (first != '{') {
-            throw new JSONException("JSON object not start with {");
+            throw new JsonException("Json object not start with {");
         }
 
-        JSONObject jsonObject = new JSONObject();
+        JsonObject jsonObject = new JsonObject();
 
         while (true) {
             char ch = readNonEmptyChar();
@@ -145,11 +145,11 @@ public class JSONStreamReader {
                 continue;
             }
 
-            JSONString key = parseString(ch);
+            JsonString key = parseString(ch);
 
             expectNonEmptyChar(':');
 
-            JSONValue value = parse();
+            JsonValue value = parse();
 
             jsonObject.put(key, value);
         }
@@ -157,13 +157,13 @@ public class JSONStreamReader {
         return jsonObject;
     }
 
-    public JSONString parseString() {
+    public JsonString parseString() {
         return parseString(readNonEmptyChar());
     }
 
-    public JSONString parseString(char first) {
+    public JsonString parseString(char first) {
         if (first != '"') {
-            throw new JSONException("JSON string not start with \"");
+            throw new JsonException("Json string not start with \"");
         }
 
         StringBuilder builder = new StringBuilder();
@@ -194,26 +194,26 @@ public class JSONStreamReader {
                             builder.append(read());
 
                             if (!StringUtils.isJSONUnicode(unicode.toString())) {
-                                throw new JSONException("Not valid unicode:" + unicode);
+                                throw new JsonException("Not valid unicode:" + unicode);
                             }
 
                             builder.append((char) Integer.parseInt(unicode.toString(), 16));
                             break;
                         default:
-                            throw new JSONException("Invalid escape char " + escapeChar + " in string");
+                            throw new JsonException("Invalid escape char " + escapeChar + " in string");
                     }
                 case '"':
-                    return new JSONString(builder.toString());
+                    return new JsonString(builder.toString());
 
                 default:
                     builder.append(ch);
             }
         }
 
-        throw new JSONException("No end \"");
+        throw new JsonException("No end \"");
     }
 
-    public JSONNumber parseNumber(char first) {
+    public JsonNumber parseNumber(char first) {
         StringBuilder builder = new StringBuilder();
 
         builder.append(first);
@@ -254,37 +254,37 @@ public class JSONStreamReader {
 
         if (builder.indexOf(".") > 0) {
             try {
-                return new JSONNumber(Double.parseDouble(builder.toString()));
+                return new JsonNumber(Double.parseDouble(builder.toString()));
             } catch (NumberFormatException ex) {
 
             }
 
-            return new JSONNumber(new BigDecimal(builder.toString()));
+            return new JsonNumber(new BigDecimal(builder.toString()));
         } else {
             try {
-                return new JSONNumber(Integer.parseInt(builder.toString()));
+                return new JsonNumber(Integer.parseInt(builder.toString()));
             } catch (NumberFormatException ex) {
 
             }
 
             try {
-                return new JSONNumber(Long.parseLong(builder.toString()));
+                return new JsonNumber(Long.parseLong(builder.toString()));
             } catch (NumberFormatException ex) {
 
             }
 
-            return new JSONNumber(new BigInteger(builder.toString()));
+            return new JsonNumber(new BigInteger(builder.toString()));
         }
     }
 
-    public JSONBoolean parseBoolean(char first) {
+    public JsonBoolean parseBoolean(char first) {
         // match true
         if (first == 't') {
             expect('r');
             expect('u');
             expect('e');
 
-            return JSONBoolean.TRUE;
+            return JsonBoolean.TRUE;
         }
 
         // match false
@@ -293,21 +293,21 @@ public class JSONStreamReader {
         expect('s');
         expect('e');
 
-        return JSONBoolean.FALSE;
+        return JsonBoolean.FALSE;
     }
 
-    public JSONNull parseNull(char first) {
+    public JsonNull parseNull(char first) {
         if (first != 'n') {
-            throw new JSONException("JSON null not start with n");
+            throw new JsonException("Json null not start with n");
         }
         expect('u');
         expect('l');
         expect('l');
 
-        return JSONNull.NULL;
+        return JsonNull.NULL;
     }
 
-    private JSONValue parse(char ch) {
+    private JsonValue parse(char ch) {
         switch (ch) {
             case '{':
                 return parseObject(ch);
@@ -333,11 +333,11 @@ public class JSONStreamReader {
             case '9':
                 return parseNumber(ch);
             default:
-                throw new JSONException("Not match char: " + ch);
+                throw new JsonException("Not match char: " + ch);
         }
     }
 
-    public JSONValue parse() {
+    public JsonValue parse() {
         char ch = readNonEmptyChar();
 
         return parse(ch);
@@ -348,7 +348,7 @@ public class JSONStreamReader {
 
         JSONStreamReader reader = new JSONStreamReader(inputStream, StandardCharsets.UTF_8);
 
-        JSONValue jsonValue = reader.parse();
+        JsonValue jsonValue = reader.parse();
 
         System.out.println(jsonValue.format(new FormatConfig(true, 0)));
     }

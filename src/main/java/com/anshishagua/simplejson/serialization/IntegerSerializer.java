@@ -1,6 +1,6 @@
 package com.anshishagua.simplejson.serialization;
 
-public class IntegerSerializer implements JSONSerializer<Integer> {
+public class IntegerSerializer implements JsonSerializer<Integer> {
     public String serialize(Integer object) {
         return object.toString();
     }

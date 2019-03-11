@@ -3,7 +3,7 @@ package com.anshishagua.simplejson.serialization;
 import java.math.BigInteger;
 import java.util.Objects;
 
-public class BigIntegerSerializer implements JSONSerializer<BigInteger> {
+public class BigIntegerSerializer implements JsonSerializer<BigInteger> {
     public String serialize(BigInteger value) {
         Objects.requireNonNull(value);
 

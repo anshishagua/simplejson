@@ -12,7 +12,7 @@ public class SerializerRegistry {
 
     }
 
-    private static final Map<Class, JSONSerializer> SERIALIZER_MAP = new HashMap<>();
+    private static final Map<Class, JsonSerializer> SERIALIZER_MAP = new HashMap<>();
 
     static {
         SERIALIZER_MAP.put(boolean.class, new BooleanSerializer());
@@ -60,7 +60,7 @@ public class SerializerRegistry {
         SERIALIZER_MAP.put(Object.class, new ObjectSerializer());
     }
 
-    public static <T> JSONSerializer<T> get(Class<T> clazz) {
+    public static <T> JsonSerializer<T> get(Class<T> clazz) {
         if (SERIALIZER_MAP.containsKey(clazz)) {
             return SERIALIZER_MAP.get(clazz);
         }

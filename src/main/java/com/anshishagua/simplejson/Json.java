@@ -1,22 +1,14 @@
 package com.anshishagua.simplejson;
 
 import com.anshishagua.simplejson.annotation.JSONField;
-import com.anshishagua.simplejson.serialization.BooleanArraySerializer;
-import com.anshishagua.simplejson.serialization.ByteArraySerializer;
-import com.anshishagua.simplejson.serialization.DoubleArraySerializer;
-import com.anshishagua.simplejson.serialization.FloatArraySerializer;
-import com.anshishagua.simplejson.serialization.IntegerArraySerializer;
-import com.anshishagua.simplejson.serialization.JSONSerializer;
-import com.anshishagua.simplejson.serialization.LongArraySerializer;
+import com.anshishagua.simplejson.serialization.JsonSerializer;
 import com.anshishagua.simplejson.serialization.SerializerRegistry;
-import com.anshishagua.simplejson.serialization.ShortArraySerializer;
-import com.anshishagua.simplejson.types.JSONArray;
-import com.anshishagua.simplejson.types.JSONBoolean;
-import com.anshishagua.simplejson.types.JSONNull;
-import com.anshishagua.simplejson.types.JSONNumber;
-import com.anshishagua.simplejson.types.JSONObject;
-import com.anshishagua.simplejson.types.JSONString;
-import com.anshishagua.simplejson.types.JSONValue;
+import com.anshishagua.simplejson.types.JsonArray;
+import com.anshishagua.simplejson.types.JsonBoolean;
+import com.anshishagua.simplejson.types.JsonNumber;
+import com.anshishagua.simplejson.types.JsonObject;
+import com.anshishagua.simplejson.types.JsonString;
+import com.anshishagua.simplejson.types.JsonValue;
 import com.anshishagua.simplejson.types.ValueType;
 import com.anshishagua.simplejson.utils.ReflectionUtils;
 import com.anshishagua.simplejson.utils.StringUtils;
@@ -24,7 +16,6 @@ import com.anshishagua.simplejson.utils.TypeUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,58 +31,58 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class JSON {
-    public static JSONValue parse(String json) {
-        JSONScanner scanner = new JSONScanner(json);
+public class Json {
+    public static JsonValue parse(String json) {
+        JsonScanner scanner = new JsonScanner(json);
 
-        JSONValue jsonValue = scanner.parse();
+        JsonValue jsonValue = scanner.parse();
 
         if (scanner.hasNext()) {
-            throw new JSONException("Extra input: " + json.substring(scanner.getIndex()));
+            throw new JsonException("Extra input: " + json.substring(scanner.getIndex()));
         }
 
         return jsonValue;
     }
 
-    public static JSONObject parseObject(String json) {
-        JSONScanner scanner = new JSONScanner(json);
+    public static JsonObject parseObject(String json) {
+        JsonScanner scanner = new JsonScanner(json);
 
         Object object = scanner.parse();
 
-        if (!(object instanceof JSONObject)) {
-            throw new JSONException("Not json object");
+        if (!(object instanceof JsonObject)) {
+            throw new JsonException("Not json object");
         }
 
         if (scanner.hasNext()) {
-            throw new JSONException("Extra input: " + json.substring(scanner.getIndex()));
+            throw new JsonException("Extra input: " + json.substring(scanner.getIndex()));
         }
 
-        return (JSONObject) object;
+        return (JsonObject) object;
     }
 
-    public static JSONArray parseArray(String json) {
-        JSONScanner scanner = new JSONScanner(json);
+    public static JsonArray parseArray(String json) {
+        JsonScanner scanner = new JsonScanner(json);
 
         Object object = scanner.parse();
 
-        if (!(object instanceof JSONArray)) {
-            throw new JSONException("Not json array");
+        if (!(object instanceof JsonArray)) {
+            throw new JsonException("Not json array");
         }
 
         if (scanner.hasNext()) {
-            throw new JSONException("Extra input: " + json.substring(scanner.getIndex()));
+            throw new JsonException("Extra input: " + json.substring(scanner.getIndex()));
         }
 
-        return (JSONArray) object;
+        return (JsonArray) object;
     }
 
     public static <T> T parse(String json, Class<T> clazz) {
         Objects.requireNonNull(json);
 
-        return parse(JSON.parse(json), clazz);
+        return parse(Json.parse(json), clazz);
     }
 
-    private static <T> T[] toArray(JSONArray jsonArray, Class<T> clazz) {
+    private static <T> T[] toArray(JsonArray jsonArray, Class<T> clazz) {
         T[] result = (T[]) Array.newInstance(clazz, jsonArray.length());
 
         for (int i = 0; i < jsonArray.length(); ++i) {
@@ -101,82 +92,82 @@ public class JSON {
         return result;
     }
 
-    private static <T> T parse(JSONValue jsonValue, Class<T> clazz) {
+    private static <T> T parse(JsonValue jsonValue, Class<T> clazz) {
         if (jsonValue.getValueType() == ValueType.NULL) {
             return null;
         }
 
         if (clazz == String.class) {
-            return (T) ((JSONString) jsonValue).getValue();
+            return (T) ((JsonString) jsonValue).getValue();
         }
 
         if (clazz == LocalDate.class) {
-            JSONString jsonString = (JSONString) jsonValue;
+            JsonString jsonString = (JsonString) jsonValue;
 
             return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz == LocalDateTime.class) {
-            JSONString jsonString = (JSONString) jsonValue;
+            JsonString jsonString = (JsonString) jsonValue;
 
             return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz == LocalTime.class) {
-            JSONString jsonString = (JSONString) jsonValue;
+            JsonString jsonString = (JsonString) jsonValue;
 
             return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz == Date.class) {
-            JSONString jsonString = (JSONString) jsonValue;
+            JsonString jsonString = (JsonString) jsonValue;
 
             return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (clazz.isEnum()) {
-            JSONString jsonString = (JSONString) jsonValue;
+            JsonString jsonString = (JsonString) jsonValue;
 
             return SerializerRegistry.get(clazz).deserialize(jsonString.getValue(), clazz);
         }
 
         if (TypeUtils.isPrimitive(clazz)) {
             if (clazz == boolean.class) {
-                return (T) (Boolean) ((JSONBoolean) jsonValue).getValue();
+                return (T) (Boolean) ((JsonBoolean) jsonValue).getValue();
             } else if (clazz == byte.class) {
-                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+                return (T) (Integer) ((JsonNumber) jsonValue).getAsInteger();
             } else if (clazz == char.class) {
-                return (T) (Character) ((JSONString) jsonValue).getValue().charAt(0);
+                return (T) (Character) ((JsonString) jsonValue).getValue().charAt(0);
             } else if (clazz == short.class) {
-                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+                return (T) (Integer) ((JsonNumber) jsonValue).getAsInteger();
             } else if (clazz == int.class) {
-                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+                return (T) (Integer) ((JsonNumber) jsonValue).getAsInteger();
             } else if (clazz == long.class) {
-                return (T) (Long) ((JSONNumber) jsonValue).getAsLong();
+                return (T) (Long) ((JsonNumber) jsonValue).getAsLong();
             } else if (clazz == float.class) {
-                return (T) (Float) ((JSONNumber) jsonValue).getAsFloat();
+                return (T) (Float) ((JsonNumber) jsonValue).getAsFloat();
             } else if (clazz == double.class) {
-                return (T) (Double) ((JSONNumber) jsonValue).getAsDouble();
+                return (T) (Double) ((JsonNumber) jsonValue).getAsDouble();
             }
         }
 
         if (TypeUtils.isPrimitiveWrapper(clazz)) {
             if (clazz == Boolean.class) {
-                return (T) (Boolean) ((JSONBoolean) jsonValue).getValue();
+                return (T) (Boolean) ((JsonBoolean) jsonValue).getValue();
             } else if (clazz == Byte.class) {
-                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+                return (T) (Integer) ((JsonNumber) jsonValue).getAsInteger();
             } else if (clazz == Character.class) {
-                return (T) (Character) ((JSONString) jsonValue).getValue().charAt(0);
+                return (T) (Character) ((JsonString) jsonValue).getValue().charAt(0);
             } else if (clazz == Short.class) {
-                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+                return (T) (Integer) ((JsonNumber) jsonValue).getAsInteger();
             } else if (clazz == Integer.class) {
-                return (T) (Integer) ((JSONNumber) jsonValue).getAsInteger();
+                return (T) (Integer) ((JsonNumber) jsonValue).getAsInteger();
             } else if (clazz == Long.class) {
-                return (T) (Long) ((JSONNumber) jsonValue).getAsLong();
+                return (T) (Long) ((JsonNumber) jsonValue).getAsLong();
             } else if (clazz == Float.class) {
-                return (T) (Float) ((JSONNumber) jsonValue).getAsFloat();
+                return (T) (Float) ((JsonNumber) jsonValue).getAsFloat();
             } else if (clazz == Double.class) {
-                return (T) (Double) ((JSONNumber) jsonValue).getAsDouble();
+                return (T) (Double) ((JsonNumber) jsonValue).getAsDouble();
             }
         }
 
@@ -187,12 +178,12 @@ public class JSON {
                 result = new HashSet<>();
             }
 
-            if (jsonValue instanceof JSONObject) {
-                throw new JSONException("JSONObject could not be converted to " + clazz.getSimpleName());
+            if (jsonValue instanceof JsonObject) {
+                throw new JsonException("JsonObject could not be converted to " + clazz.getSimpleName());
             }
 
-            if (jsonValue instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) jsonValue;
+            if (jsonValue instanceof JsonArray) {
+                JsonArray jsonArray = (JsonArray) jsonValue;
 
                 for (int i = 0; i < jsonArray.length(); ++i) {
                     result.add(jsonArray.get(i).toObject());
@@ -205,17 +196,17 @@ public class JSON {
         }
 
         if (Map.class.isAssignableFrom(clazz)) {
-            if (!(jsonValue instanceof JSONObject)) {
-                throw new JSONException("Not json object");
+            if (!(jsonValue instanceof JsonObject)) {
+                throw new JsonException("Not json object");
             }
 
-            JSONObject jsonObject = (JSONObject) jsonValue;
+            JsonObject jsonObject = (JsonObject) jsonValue;
 
             return (T) jsonObject.toObject();
         }
 
         if (clazz.isArray()) {
-            JSONArray jsonArray = (JSONArray) jsonValue;
+            JsonArray jsonArray = (JsonArray) jsonValue;
 
             if (TypeUtils.isPrimitiveArray(clazz)) {
                 Class<?> componentType = clazz.getComponentType();
@@ -223,9 +214,9 @@ public class JSON {
                     boolean[] result = new boolean[jsonArray.length()];
 
                     for (int i = 0 ; i < jsonArray.length(); ++i) {
-                        JSONBoolean jsonBoolean = (JSONBoolean) jsonArray.get(i);
+                        JsonBoolean jsonBoolean = (JsonBoolean) jsonArray.get(i);
 
-                        result[i] = jsonBoolean == JSONBoolean.TRUE ? true : false;
+                        result[i] = jsonBoolean == JsonBoolean.TRUE ? true : false;
                     }
 
                     return (T) result;
@@ -233,7 +224,7 @@ public class JSON {
                     byte[] result = new byte[jsonArray.length()];
 
                     for (int i = 0 ; i < jsonArray.length(); ++i) {
-                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+                        JsonNumber jsonNumber = (JsonNumber) jsonArray.get(i);
 
                         result[i] = (byte) jsonNumber.getAsInteger();
                     }
@@ -245,7 +236,7 @@ public class JSON {
                     short[] result = new short[jsonArray.length()];
 
                     for (int i = 0 ; i < jsonArray.length(); ++i) {
-                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+                        JsonNumber jsonNumber = (JsonNumber) jsonArray.get(i);
 
                         result[i] = (short) jsonNumber.getAsInteger();
                     }
@@ -255,7 +246,7 @@ public class JSON {
                     int[] result = new int[jsonArray.length()];
 
                     for (int i = 0 ; i < jsonArray.length(); ++i) {
-                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+                        JsonNumber jsonNumber = (JsonNumber) jsonArray.get(i);
 
                         result[i] = jsonNumber.getAsInteger();
                     }
@@ -265,7 +256,7 @@ public class JSON {
                     long[] result = new long[jsonArray.length()];
 
                     for (int i = 0 ; i < jsonArray.length(); ++i) {
-                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+                        JsonNumber jsonNumber = (JsonNumber) jsonArray.get(i);
 
                         result[i] = jsonNumber.getAsLong();
                     }
@@ -275,7 +266,7 @@ public class JSON {
                     float[] result = new float[jsonArray.length()];
 
                     for (int i = 0 ; i < jsonArray.length(); ++i) {
-                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+                        JsonNumber jsonNumber = (JsonNumber) jsonArray.get(i);
 
                         result[i] = (float) jsonNumber.getAsDouble();
                     }
@@ -285,7 +276,7 @@ public class JSON {
                     double[] result = new double[jsonArray.length()];
 
                     for (int i = 0 ; i < jsonArray.length(); ++i) {
-                        JSONNumber jsonNumber = (JSONNumber) jsonArray.get(i);
+                        JsonNumber jsonNumber = (JsonNumber) jsonArray.get(i);
 
                         result[i] = jsonNumber.getAsDouble();
                     }
@@ -297,13 +288,13 @@ public class JSON {
             }
         }
 
-        JSONObject jsonObject = (JSONObject) jsonValue;
+        JsonObject jsonObject = (JsonObject) jsonValue;
 
         T object = null;
         try {
             object = clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            throw new JSONException(ex);
+            throw new JsonException(ex);
         }
 
         Field [] fields = clazz.getDeclaredFields();
@@ -323,7 +314,7 @@ public class JSON {
                 }
             }
 
-            JSONValue value = jsonObject.get(new JSONString(fieldName));
+            JsonValue value = jsonObject.get(new JsonString(fieldName));
 
             if (value == null) {
                 continue;
@@ -334,22 +325,22 @@ public class JSON {
                     field.set(object, parse(value, field.getType()));
                 } else {
                     if (field.getType().isEnum()) {
-                        JSONString jsonString = (JSONString) value;
+                        JsonString jsonString = (JsonString) value;
 
                         field.set(object, ReflectionUtils.enumValueOf(field.getType(), jsonString.getValue()));
                     } else if (field.getType() == LocalDate.class) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        JSONString jsonString = (JSONString) value;
+                        JsonString jsonString = (JsonString) value;
 
                         field.set(object, LocalDate.parse(jsonString.getValue(), formatter));
                     } else if (field.getType() == LocalDateTime.class) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        JSONString jsonString = (JSONString) value;
+                        JsonString jsonString = (JsonString) value;
 
                         field.set(object, LocalDateTime.parse(jsonString.getValue(), formatter));
                     } else if (field.getType() == LocalTime.class) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                        JSONString jsonString = (JSONString) value;
+                        JsonString jsonString = (JsonString) value;
 
                         field.set(object, LocalTime.parse(jsonString.getValue(), formatter));
                     } else {
@@ -357,24 +348,24 @@ public class JSON {
                     }
                 }
             } catch (Exception ex) {
-                throw new JSONException(ex);
+                throw new JsonException(ex);
             }
         }
 
         return object;
     }
 
-    public static String toJSONString(Object object) {
-        return toJSONString(object, new IdentityHashMap<>());
+    public static String toJson(Object object) {
+        return toJson(object, new IdentityHashMap<>());
     }
 
-    private static String toJSONString(Object object, IdentityHashMap<Object, List<Object>> map) {
+    private static String toJson(Object object, IdentityHashMap<Object, List<Object>> map) {
         if (object == null) {
             return "null";
         }
 
         if (map.containsKey(object)) {
-            throw new JSONException("Circular reference for object " + object);
+            throw new JsonException("Circular reference for object " + object);
         }
 
         Class<?> clazz = object.getClass();
@@ -397,21 +388,21 @@ public class JSON {
 
         if (TypeUtils.isPrimitiveArray(clazz)) {
             if (clazz == boolean[].class) {
-                return ((JSONSerializer<boolean[]>) SerializerRegistry.get(clazz)).serialize((boolean[]) object);
+                return ((JsonSerializer<boolean[]>) SerializerRegistry.get(clazz)).serialize((boolean[]) object);
             } else if (clazz == byte[].class) {
-                return ((JSONSerializer<byte[]>) SerializerRegistry.get(clazz)).serialize((byte[]) object);
+                return ((JsonSerializer<byte[]>) SerializerRegistry.get(clazz)).serialize((byte[]) object);
             } else if (clazz == char[].class) {
-                return ((JSONSerializer<char[]>) SerializerRegistry.get(clazz)).serialize((char[]) object);
+                return ((JsonSerializer<char[]>) SerializerRegistry.get(clazz)).serialize((char[]) object);
             } else if (clazz == short[].class) {
-                return ((JSONSerializer<short[]>) SerializerRegistry.get(clazz)).serialize((short[]) object);
+                return ((JsonSerializer<short[]>) SerializerRegistry.get(clazz)).serialize((short[]) object);
             } else if (clazz == int[].class) {
-                return ((JSONSerializer<int[]>) SerializerRegistry.get(clazz)).serialize((int[]) object);
+                return ((JsonSerializer<int[]>) SerializerRegistry.get(clazz)).serialize((int[]) object);
             } else if (clazz == long[].class) {
-                return ((JSONSerializer<long[]>) SerializerRegistry.get(clazz)).serialize((long[]) object);
+                return ((JsonSerializer<long[]>) SerializerRegistry.get(clazz)).serialize((long[]) object);
             } else if (clazz == float[].class) {
-                return ((JSONSerializer<float[]>) SerializerRegistry.get(clazz)).serialize((float[]) object);
+                return ((JsonSerializer<float[]>) SerializerRegistry.get(clazz)).serialize((float[]) object);
             } else {
-                return ((JSONSerializer<double[]>) SerializerRegistry.get(clazz)).serialize((double[]) object);
+                return ((JsonSerializer<double[]>) SerializerRegistry.get(clazz)).serialize((double[]) object);
             }
         }
 
@@ -424,7 +415,7 @@ public class JSON {
                 list.add(obj);
             }
 
-            return toJSONString(list, map);
+            return toJson(list, map);
         }
 
         if (clazz.isEnum()) {
@@ -439,7 +430,7 @@ public class JSON {
             return SerializerRegistry.get(LocalDateTime.class).serialize((LocalDateTime) object);
         }
 
-        if (object instanceof JSONValue) {
+        if (object instanceof JsonValue) {
             return object.toString();
         }
 
@@ -456,13 +447,13 @@ public class JSON {
         }
 
         if (object instanceof Collection) {
-            JSONSerializer jsonSerializer = SerializerRegistry.get(object.getClass());
+            JsonSerializer jsonSerializer = SerializerRegistry.get(object.getClass());
 
             return jsonSerializer.serialize(object);
         }
 
         if (!TypeUtils.isUserDefinedObject(clazz)) {
-            throw new JSONException("Unsupported type:" + clazz.getName());
+            throw new JsonException("Unsupported type:" + clazz.getName());
         }
 
         return SerializerRegistry.get(Object.class).serialize(object);
@@ -471,34 +462,34 @@ public class JSON {
     public static String format(String json) {
         Objects.requireNonNull(json);
 
-        JSONValue jsonValue = parse(json);
+        JsonValue jsonValue = parse(json);
 
         return jsonValue.format(new FormatConfig(true, 0));
     }
 
-    public static String format(JSONValue jsonValue) {
+    public static String format(JsonValue jsonValue) {
         return jsonValue.format(new FormatConfig(true, 0));
     }
 
     public static String compress(String json) {
         Objects.requireNonNull(json);
 
-        JSONValue jsonValue = parse(json);
+        JsonValue jsonValue = parse(json);
 
         return compress(jsonValue);
     }
 
-    private static String compress(JSONValue jsonValue) {
+    private static String compress(JsonValue jsonValue) {
         Objects.requireNonNull(jsonValue);
 
         StringBuilder builder;
 
         switch (jsonValue.getValueType()) {
             case ARRAY:
-                JSONArray jsonArray = (JSONArray) jsonValue;
+                JsonArray jsonArray = (JsonArray) jsonValue;
 
                 builder = new StringBuilder();
-                builder.append(JSONConstants.LEFT_BRACKET);
+                builder.append(JsonConstants.LEFT_BRACKET);
 
                 for (int i = 0; i < jsonArray.length(); ++i) {
                     builder.append(compress(jsonArray.get(i)));
@@ -508,30 +499,30 @@ public class JSON {
                     }
                 }
 
-                builder.append(JSONConstants.RIGHT_BRACKET);
+                builder.append(JsonConstants.RIGHT_BRACKET);
 
                 return builder.toString();
             case OBJECT:
-                JSONObject jsonObject = (JSONObject) jsonValue;
+                JsonObject jsonObject = (JsonObject) jsonValue;
 
                 builder = new StringBuilder();
-                builder.append(JSONConstants.LEFT_CURLY_BRACKET);
+                builder.append(JsonConstants.LEFT_CURLY_BRACKET);
 
-                Iterator<JSONString> iterator = jsonObject.keySet().iterator();
+                Iterator<JsonString> iterator = jsonObject.keySet().iterator();
 
                 while (iterator.hasNext()) {
-                    JSONString key = iterator.next();
+                    JsonString key = iterator.next();
 
                     builder.append(key.toString());
                     builder.append(":");
                     builder.append(compress(jsonObject.get(key)));
 
                     if (iterator.hasNext()) {
-                        builder.append(JSONConstants.COMMA);
+                        builder.append(JsonConstants.COMMA);
                     }
                 }
 
-                builder.append(JSONConstants.RIGHT_CURLY_BRACKET);
+                builder.append(JsonConstants.RIGHT_CURLY_BRACKET);
 
                 return builder.toString();
             default:
@@ -541,7 +532,7 @@ public class JSON {
 
     public static boolean validate(String json) {
         try {
-            JSON.parse(json);
+            Json.parse(json);
 
             return true;
         } catch (Exception ex) {

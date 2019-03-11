@@ -3,7 +3,7 @@ package com.anshishagua.simplejson.serialization;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class CollectionSerializer implements JSONSerializer<Collection<?>> {
+public class CollectionSerializer implements JsonSerializer<Collection<?>> {
     @Override
     public String serialize(Collection<?> object) {
         StringBuilder builder = new StringBuilder("[");
@@ -16,7 +16,7 @@ public class CollectionSerializer implements JSONSerializer<Collection<?>> {
             if (obj == null) {
                 builder.append("null");
             } else {
-                JSONSerializer jsonSerializer = SerializerRegistry.get(obj.getClass());
+                JsonSerializer jsonSerializer = SerializerRegistry.get(obj.getClass());
 
                 builder.append(jsonSerializer.serialize(obj));
             }

@@ -1,17 +1,16 @@
 package com.anshishagua.simplejson;
 
-import com.anshishagua.simplejson.types.JSONArray;
-import com.anshishagua.simplejson.types.JSONBoolean;
-import com.anshishagua.simplejson.types.JSONNull;
-import com.anshishagua.simplejson.types.JSONNumber;
-import com.anshishagua.simplejson.types.JSONObject;
-import com.anshishagua.simplejson.types.JSONString;
-import com.anshishagua.simplejson.types.JSONValue;
+import com.anshishagua.simplejson.types.JsonArray;
+import com.anshishagua.simplejson.types.JsonBoolean;
+import com.anshishagua.simplejson.types.JsonNull;
+import com.anshishagua.simplejson.types.JsonNumber;
+import com.anshishagua.simplejson.types.JsonObject;
+import com.anshishagua.simplejson.types.JsonString;
+import com.anshishagua.simplejson.types.JsonValue;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -50,11 +49,11 @@ class JSONScanner2 {
         char ch = read();
 
         if (ch != expect) {
-            throw new JSONException("Not expect char: " + ch + ", expecting " + expect);
+            throw new JsonException("Not expect char: " + ch + ", expecting " + expect);
         }
     }
 
-    public JSONValue parse2() {
+    public JsonValue parse2() {
         Stack<Object> stack = new Stack<>();
         Stack<State> states = new Stack<>();
         State state = State.BEGIN;
@@ -66,7 +65,7 @@ class JSONScanner2 {
 
             if (ch == EOF) {
                 if (stack.size() != 1) {
-                    throw new JSONException();
+                    throw new JsonException();
                 }
             }
 
@@ -75,7 +74,7 @@ class JSONScanner2 {
                 states.push(State.OBJECT_BEGIN);
                 ++position;
             } else if (ch == '[') {
-                stack.push(new JSONArray());
+                stack.push(new JsonArray());
                 states.push(State.ARRAY_BEGIN);
                 ++position;
             } else if (ch == '"') {
@@ -106,11 +105,11 @@ class JSONScanner2 {
         }
     }
 
-    public JSONValue parse() {
+    public JsonValue parse() {
         State state = State.BEGIN;
         StringBuilder builder = new StringBuilder();
-        JSONObject jsonObject;
-        JSONArray jsonArray;
+        JsonObject jsonObject;
+        JsonArray jsonArray;
         boolean shouldBreak = false;
 
         Stack<Object> stack = new Stack<>();
@@ -143,7 +142,7 @@ class JSONScanner2 {
                         expect('l');
                         expect('l');
 
-                        stack.push(JSONNull.NULL);
+                        stack.push(JsonNull.NULL);
 
                         if (state == State.OBJECT_BEGIN) {
 
@@ -160,7 +159,7 @@ class JSONScanner2 {
 
         }
 
-        JSONValue jsonValue = null;
+        JsonValue jsonValue = null;
 
         switch (ch) {
             case '{':
@@ -194,16 +193,16 @@ class JSONScanner2 {
                                     builder.append(read());
 
                                     if (!StringUtils.isJSONUnicode(unicode.toString())) {
-                                        throw new JSONException("Not valid unicode:" + unicode);
+                                        throw new JsonException("Not valid unicode:" + unicode);
                                     }
 
                                     builder.append((char) Integer.parseInt(unicode.toString(), 16));
                                     break;
                                 default:
-                                    throw new JSONException("Invalid escape char " + escapeChar + " in string");
+                                    throw new JsonException("Invalid escape char " + escapeChar + " in string");
                             }
                         case '"':
-                            stack.push(new JSONString(builder.toString()));
+                            stack.push(new JsonString(builder.toString()));
 
                             shouldBreak = true;
                             break;
@@ -222,7 +221,7 @@ class JSONScanner2 {
                 expect('r');
                 expect('u');
                 expect('e');
-                stack.push(JSONBoolean.TRUE);
+                stack.push(JsonBoolean.TRUE);
 
                 break;
             case 'f':
@@ -231,14 +230,14 @@ class JSONScanner2 {
                 expect('s');
                 expect('e');
 
-                stack.push(JSONBoolean.FALSE);
+                stack.push(JsonBoolean.FALSE);
                 break;
             case 'n':
                 expect('u');
                 expect('l');
                 expect('l');
 
-                stack.push(JSONNull.NULL);
+                stack.push(JsonNull.NULL);
                 break;
             case '-':
             case '0':
@@ -288,36 +287,36 @@ class JSONScanner2 {
 
                 --position;
 
-                JSONNumber jsonNumber = null;
+                JsonNumber jsonNumber = null;
 
                 if (builder.indexOf(".") > 0) {
                     try {
-                        jsonNumber = new JSONNumber(Double.parseDouble(builder.toString()));
+                        jsonNumber = new JsonNumber(Double.parseDouble(builder.toString()));
                     } catch (NumberFormatException ex) {
 
                     }
 
-                    jsonNumber = new JSONNumber(new BigDecimal(builder.toString()));
+                    jsonNumber = new JsonNumber(new BigDecimal(builder.toString()));
                 } else {
                     try {
-                        jsonNumber = new JSONNumber(Integer.parseInt(builder.toString()));
+                        jsonNumber = new JsonNumber(Integer.parseInt(builder.toString()));
                     } catch (NumberFormatException ex) {
 
                     }
 
                     try {
-                        jsonNumber = new JSONNumber(Long.parseLong(builder.toString()));
+                        jsonNumber = new JsonNumber(Long.parseLong(builder.toString()));
                     } catch (NumberFormatException ex) {
 
                     }
 
-                    jsonNumber = new JSONNumber(new BigInteger(builder.toString()));
+                    jsonNumber = new JsonNumber(new BigInteger(builder.toString()));
                 }
 
                 stack.push(jsonNumber);
                 break;
             default:
-                throw new JSONException(String.format("Not valid char %c at pos:%d", ch, position));
+                throw new JsonException(String.format("Not valid char %c at pos:%d", ch, position));
         }
 
         return jsonValue;
@@ -326,7 +325,7 @@ class JSONScanner2 {
     public static void main(String [] args) {
         List<int[]> list = new ArrayList<>();
 
-        list = JSON.parse("[[1, 3], [3, 5]]", list.getClass());
+        list = Json.parse("[[1, 3], [3, 5]]", list.getClass());
 
         Type type = list.getClass();
 

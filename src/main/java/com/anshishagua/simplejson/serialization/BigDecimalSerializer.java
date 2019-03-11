@@ -3,7 +3,7 @@ package com.anshishagua.simplejson.serialization;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class BigDecimalSerializer implements JSONSerializer<BigDecimal> {
+public class BigDecimalSerializer implements JsonSerializer<BigDecimal> {
     @Override
     public String serialize(BigDecimal object) {
         Objects.requireNonNull(object);

@@ -2,7 +2,7 @@ package com.anshishagua.simplejson.serialization;
 
 import java.util.Objects;
 
-public class DoubleSerializer implements JSONSerializer<Double> {
+public class DoubleSerializer implements JsonSerializer<Double> {
     public String serialize(Double value) {
         Objects.requireNonNull(value);
 

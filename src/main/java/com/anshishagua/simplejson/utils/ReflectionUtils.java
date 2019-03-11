@@ -1,6 +1,6 @@
 package com.anshishagua.simplejson.utils;
 
-import com.anshishagua.simplejson.JSONException;
+import com.anshishagua.simplejson.JsonException;
 
 import java.lang.reflect.Method;
 
@@ -12,7 +12,7 @@ public class ReflectionUtils {
             method.setAccessible(true);
             return method.invoke(null, name);
         } catch (Exception ex) {
-            throw new JSONException(ex);
+            throw new JsonException(ex);
         }
     }
 }

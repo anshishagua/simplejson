@@ -1,6 +1,6 @@
 package com.anshishagua.simplejson.serialization;
 
-public class FloatSerializer implements JSONSerializer<Float> {
+public class FloatSerializer implements JsonSerializer<Float> {
     @Override
     public String serialize(Float object) {
         return object.toString();

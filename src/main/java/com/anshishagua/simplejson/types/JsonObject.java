@@ -1,7 +1,7 @@
 package com.anshishagua.simplejson.types;
 
 import com.anshishagua.simplejson.FormatConfig;
-import com.anshishagua.simplejson.JSONConstants;
+import com.anshishagua.simplejson.JsonConstants;
 import com.anshishagua.simplejson.utils.StringUtils;
 
 import java.util.HashMap;
@@ -10,67 +10,67 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class JSONObject implements JSONValue {
-    private Map<JSONString, JSONValue> map;
+public class JsonObject implements JsonValue {
+    private Map<JsonString, JsonValue> map;
 
-    public JSONObject() {
+    public JsonObject() {
         map = new LinkedHashMap<>();
     }
 
-    public JSONObject(Map<JSONString, JSONValue> map) {
+    public JsonObject(Map<JsonString, JsonValue> map) {
         this.map = new HashMap<>();
         this.map.putAll(map);
     }
 
     public void put(String key, String value) {
-        map.put(new JSONString(key), new JSONString(value));
+        map.put(new JsonString(key), new JsonString(value));
     }
 
     public void put(String key, double value) {
-        map.put(new JSONString(key), new JSONNumber(value));
+        map.put(new JsonString(key), new JsonNumber(value));
     }
 
     public void put(String key, boolean value) {
-        map.put(new JSONString(key), value ? JSONBoolean.TRUE : JSONBoolean.FALSE);
+        map.put(new JsonString(key), value ? JsonBoolean.TRUE : JsonBoolean.FALSE);
     }
 
-    public void put(String key, JSONValue value) {
-        map.put(new JSONString(key), value);
+    public void put(String key, JsonValue value) {
+        map.put(new JsonString(key), value);
     }
 
-    public void put(JSONString key, JSONValue value) {
+    public void put(JsonString key, JsonValue value) {
         map.put(key, value);
     }
 
     public String getString(String key) {
-        JSONValue jsonValue = map.get(new JSONString(key));
+        JsonValue jsonValue = map.get(new JsonString(key));
 
-        return ((JSONString) jsonValue).getValue();
+        return ((JsonString) jsonValue).getValue();
     }
 
     public int getInt(String key) {
-        JSONValue jsonValue = map.get(new JSONString(key));
+        JsonValue jsonValue = map.get(new JsonString(key));
 
-        return ((JSONNumber) jsonValue).getAsInteger();
+        return ((JsonNumber) jsonValue).getAsInteger();
     }
 
     public double getDouble(String key) {
-        JSONValue jsonValue = map.get(new JSONString(key));
+        JsonValue jsonValue = map.get(new JsonString(key));
 
-        return ((JSONNumber) jsonValue).getAsDouble();
+        return ((JsonNumber) jsonValue).getAsDouble();
     }
 
     public boolean getBoolean(String key) {
-        JSONValue jsonValue = map.get(new JSONString(key));
+        JsonValue jsonValue = map.get(new JsonString(key));
 
-        return ((JSONBoolean) jsonValue).getValue();
+        return ((JsonBoolean) jsonValue).getValue();
     }
 
-    public JSONValue get(JSONString key) {
+    public JsonValue get(JsonString key) {
         return map.get(key);
     }
 
-    public Set<JSONString> keySet() {
+    public Set<JsonString> keySet() {
         return map.keySet();
     }
 
@@ -82,13 +82,13 @@ public class JSONObject implements JSONValue {
             builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
         }
 
-        builder.append(JSONConstants.LEFT_CURLY_BRACKET);
-        builder.append(JSONConstants.NEW_LINE);
+        builder.append(JsonConstants.LEFT_CURLY_BRACKET);
+        builder.append(JsonConstants.NEW_LINE);
 
-        Iterator<Map.Entry<JSONString, JSONValue>> iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<JsonString, JsonValue>> iterator = map.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Map.Entry<JSONString, JSONValue> entry = iterator.next();
+            Map.Entry<JsonString, JsonValue> entry = iterator.next();
 
             builder.append(entry.getKey().format(new FormatConfig(formatConfig.shouldIndent(), formatConfig.getIndent() + 1, formatConfig.getIndentString())));
 
@@ -101,17 +101,17 @@ public class JSONObject implements JSONValue {
             }
 
             if (iterator.hasNext()) {
-                builder.append(JSONConstants.COMMA);
+                builder.append(JsonConstants.COMMA);
             }
 
-            builder.append(JSONConstants.NEW_LINE);
+            builder.append(JsonConstants.NEW_LINE);
         }
 
         if (formatConfig.shouldIndent()) {
             builder.append(StringUtils.repeat(formatConfig.getIndentString(), formatConfig.getIndent()));
         }
 
-        builder.append(JSONConstants.RIGHT_CURLY_BRACKET);
+        builder.append(JsonConstants.RIGHT_CURLY_BRACKET);
 
         return builder.toString();
     }
@@ -120,12 +120,12 @@ public class JSONObject implements JSONValue {
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(JSONConstants.LEFT_CURLY_BRACKET);
+        builder.append(JsonConstants.LEFT_CURLY_BRACKET);
 
-        Iterator<Map.Entry<JSONString, JSONValue>> iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<JsonString, JsonValue>> iterator = map.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Map.Entry<JSONString, JSONValue> entry = iterator.next();
+            Map.Entry<JsonString, JsonValue> entry = iterator.next();
 
             builder.append(entry.getKey().toString());
 
@@ -134,11 +134,11 @@ public class JSONObject implements JSONValue {
             builder.append(entry.getValue().toString());
 
             if (iterator.hasNext()) {
-                builder.append(JSONConstants.COMMA);
+                builder.append(JsonConstants.COMMA);
             }
         }
 
-        builder.append(JSONConstants.RIGHT_CURLY_BRACKET);
+        builder.append(JsonConstants.RIGHT_CURLY_BRACKET);
 
         return builder.toString();
     }
@@ -152,7 +152,7 @@ public class JSONObject implements JSONValue {
     public Object toObject() {
         Map<String, Object> result = new HashMap<>();
 
-        for (JSONString key : map.keySet()) {
+        for (JsonString key : map.keySet()) {
             result.put(key.toString(), map.get(key).toObject());
         }
 

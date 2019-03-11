@@ -1,9 +1,8 @@
 package com.anshishagua.simplejson.serialization;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class ByteArraySerializer implements JSONSerializer<byte[]> {
+public class ByteArraySerializer implements JsonSerializer<byte[]> {
     @Override
     public String serialize(byte [] array) {
         Objects.requireNonNull(array);

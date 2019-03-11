@@ -6,7 +6,7 @@ import com.anshishagua.simplejson.utils.StringUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class JSONNumber implements JSONValue {
+public class JsonNumber implements JsonValue {
     public enum NumberType {
         INTEGER,
         LONG,
@@ -18,7 +18,7 @@ public class JSONNumber implements JSONValue {
     private NumberType numberType;
     private Object value;
 
-    public JSONNumber(Object value) {
+    public JsonNumber(Object value) {
         this.value = value;
 
         if (value instanceof Integer) {
